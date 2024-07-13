@@ -16,6 +16,7 @@ export default async function SetupLayout({
 
     return (
         <>
+            <h1>Nav</h1>
             {children}
         </>
     );

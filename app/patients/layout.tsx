@@ -4,11 +4,11 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-    title: 'Individual Patient',
-    description: 'Individual Patient',
+    title: 'Patient List',
+    description: 'Patient List',
 }
 
-export default async function PatientLayout({
+export default async function PatientsLayout({
     children,
 }: {
     children: React.ReactNode
@@ -16,6 +16,7 @@ export default async function PatientLayout({
 
     return (
         <>
+            <h1>Patients Nav</h1>
             {children}
         </>
     );
