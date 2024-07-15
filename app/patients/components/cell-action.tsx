@@ -1,10 +1,10 @@
 "use client"
 
 import { useState } from "react";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
-
+import { ApiResponse } from "@/types/api-response";
 
 import {
     DropdownMenu, DropdownMenuContent,
@@ -16,7 +16,10 @@ import { PatientColumn } from "./columns";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { AlertModal } from "@/components/modals/alert-modal";
-
+import useDeletePatient from "@/hooks/useDeletePatient";
+import { ifError } from "assert";
+import { usePatientStore } from "@/store/patient-store";
+import { ToastAction } from "@radix-ui/react-toast";
 
 interface CellActionProps {
     data: PatientColumn;
@@ -30,40 +33,51 @@ export const CellAction: React.FC<CellActionProps> = ({
     const params = useParams()
     const { toast } = useToast()
 
+    const { deletePatient: deletePatientFromStore } = usePatientStore();
+
     const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
+
+    const { deletePatient, error, loading } = useDeletePatient()
 
     const onCopy = (id: string) => {
         navigator.clipboard.writeText(id);
-        // toast.success('Billboard Id copied to clipboard.');
         toast({
             title: 'Patient Id copied to clipboard.',
-            // description: errorMessage,
-            variant: 'default',
+            description: `Id: ${id}`,
+            variant: 'success',
         });
     }
 
     const onConfirm = async () => {
+
         try {
-            setLoading(true);
-            await axios.delete(`/api/${params.storeId}/billboards/${data._id}`);
-            toast({
-                title: 'Patient Deleted',
-                // description: errorMessage,
-                variant: 'default',
-            });
-            router.refresh();
-        } catch (error) {
-            // toast.error('Make sure you removed all categories using this billboard first.');
-            toast({
-                title: 'Default message',
-                // description: error.data.message,
-                variant: 'default',
-            });
-        } finally {
-            setOpen(false);
-            setLoading(false);
+            const response = await deletePatient("");
+
+            if (!error) {
+                toast({
+                    title: 'Patient Deleted',
+                    description: response?.message,
+                    variant: 'success',
+                });
+                deletePatientFromStore(response.deletedPatient._id);
+                setOpen(false);
+            }
+        } catch (err) {
+            console.log("[CELL_ACTION_ERROR_1]::", err);
         }
+
+        if (error) {
+            const errorMessage = error.message || 'Error while deletingPPP. Please try again.';
+
+            toast({
+                title: 'Deletion failed',
+                description: errorMessage,
+                variant: 'destructive',
+            });
+        }
+
+        // setOpen(false);
+
     };
 
     return (

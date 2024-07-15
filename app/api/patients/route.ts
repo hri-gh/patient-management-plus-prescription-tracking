@@ -1,12 +1,15 @@
 import dbConnect from "@/lib/db-connect";
 import PatientModel from "@/models/patient.model";
 import { Patient } from "@/types/patient.interface";
+import { auth } from "@/auth";
+// import { NextApiRequest, NextApiResponse } from "next";
+// import { NextResponse, NextRequest } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
     await dbConnect();
 
     try {
-        const reqBody: Patient = await request.json();
+        const reqBody: Patient = await req.json();
         const { name, mobile, email, age, gender, place, } = reqBody;
 
         const existingUser = await PatientModel.findOne({ mobile });
@@ -34,15 +37,17 @@ export async function POST(request: Request) {
 }
 
 
-
-export async function GET(request: Request) {
-    await dbConnect();
-
+export const GET = auth(async function GET(req) {
     try {
-        const patients = await PatientModel.find()
-        return Response.json(patients);
+        if (req.auth) {
+            await dbConnect();
+            const patients = await PatientModel.find()
+            return Response.json(patients);
+        }
+
+        return Response.json({ message: 'Not authenticated', success: false }, { status: 401 });
     } catch (error) {
         console.log('[PATIENTS_GET]', error);
         return Response.json({ message: 'Internal server error', success: false }, { status: 500 });
     }
-};
+});
