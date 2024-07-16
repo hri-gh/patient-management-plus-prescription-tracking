@@ -9,11 +9,14 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 interface AdminDocument extends Document {
     username: string;
     password: string;
-    email:string;
+    email: string;
+    verifyCode: string;
+    verifyCodeExpiry: Date;
+    isVerified: boolean;
 }
 
 
-const AdminSchema:Schema<AdminDocument> = new mongoose.Schema({
+const AdminSchema: Schema<AdminDocument> = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -26,7 +29,17 @@ const AdminSchema:Schema<AdminDocument> = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-    }
+    },
+    verifyCode: {
+        type: String,
+    },
+    verifyCodeExpiry: {
+        type: Date,
+    },
+    isVerified: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 
@@ -40,5 +53,5 @@ const AdminSchema:Schema<AdminDocument> = new mongoose.Schema({
 
 // const AdminModel: Model<AdminDocument> =mongoose.models.Admin || mongoose.model<AdminDocument>('Admin', AdminSchema);
 
-const AdminModel = mongoose.models && mongoose.models.Admin  ? mongoose.models.Admin as mongoose.Model<AdminDocument> : mongoose.model<AdminDocument>('Admin', AdminSchema);
+const AdminModel = mongoose.models && mongoose.models.Admin ? mongoose.models.Admin as mongoose.Model<AdminDocument> : mongoose.model<AdminDocument>('Admin', AdminSchema);
 export default AdminModel;

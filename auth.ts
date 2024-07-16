@@ -1,7 +1,7 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import dbConnect from "./lib/db-connect"
-import AdminModel from "./models/admin.mode";
+import AdminModel from "./models/admin.model";
 import bcrypt from 'bcryptjs';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -44,10 +44,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     ],
 
     callbacks: {
+        jwt: async ({ token, user }) => {
+            if (user) {
+                token._id = user._id?.toString(); // Convert ObjectId to string
+                token.username = user.username;
+            }
+            return token
+        },
+
+        session: async ({ session, token }) => {
+            if (token) {
+
+                session.user._id = token._id;
+                session.user.username = token.username;
+            }
+            return session
+        },
+
         authorized: async ({ auth }) => {
             // // Logged in users are authenticated, otherwise redirect to login page
             return !!auth
         },
+    },
 
+    secret: process.env.NEXTAUTH_SECRET,
+    session: {
+        strategy: "jwt",
     },
 })

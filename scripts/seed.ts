@@ -1,5 +1,5 @@
 import dbConnect from "../lib/db-connect";
-import Admin from '../models/admin.mode';
+import Admin from '../models/admin.model';
 import bcrypt from 'bcryptjs';
 
 async function seed() {

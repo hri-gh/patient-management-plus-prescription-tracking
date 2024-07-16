@@ -27,7 +27,7 @@ const Homepage = async () => {
         {session ? <SignOut /> : <SignIn />}
       </nav>
       <p>Home Page</p>
-      <h1 className="text-3xl font-bold underline">Hello, {session?.user?.name}!</h1>
+      <h1 className="text-3xl font-bold underline">Hello, {session?.user?.username}!</h1>
     </div>
   )
 }

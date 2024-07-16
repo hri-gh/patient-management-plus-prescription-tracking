@@ -19,3 +19,11 @@ const PatientRegisterSchemaShape: SchemaShape<Patient> = ({
 })
 
 export const PatientRegisterSchema = z.object(PatientRegisterSchemaShape)
+
+
+// *-------------*
+// Verify Schema
+// *-------------*
+export const VerifySchema = z.object({
+    code: z.string().length(6, 'OTP must be 6 digits'),
+});
