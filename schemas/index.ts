@@ -20,6 +20,15 @@ const PatientRegisterSchemaShape: SchemaShape<Patient> = ({
 
 export const PatientRegisterSchema = z.object(PatientRegisterSchemaShape)
 
+// *-------------*
+// SignIn Schema
+// *-------------*
+export const SignInSchema = z.object({
+    identifier: z.string().min(1),  // We don't know if it is an email or a username yet
+    password: z.string().min(1),
+});
+
+
 
 // *-------------*
 // Verify Schema

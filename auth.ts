@@ -8,9 +8,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     providers: [
         Credentials({
             name: "Credentials",
+            id: 'credentials',
             credentials: {
                 username: {
-                    label: "Username",
+                    label: "Email/Username",
                     type: "text",
                 },
                 password: {
@@ -18,16 +19,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     type: "password",
                 },
             },
-            authorize: async (credentials): Promise<any> => {
+            authorize: async (credentials:any): Promise<any> => {
+                console.log(credentials)
                 await dbConnect()
                 try {
-                    let user = await AdminModel.findOne({ username: credentials.username })
+                    let user = await AdminModel.findOne({
+                        $or: [
+                            { email: credentials.identifier },
+                            { username: credentials.identifier },
+                        ]
+                    })
 
                     if (!user) {
-                        throw new Error('No user found with this Username');
+                        throw new Error('No user found with this Username or Email');
                     }
 
-                    const isPasswordCorrect = await bcrypt.compare(credentials.password as string, user.password);
+                    const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
 
                     if (isPasswordCorrect) {
                         console.log("[AUTH.TS_USER::]", user)
@@ -36,8 +43,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     else {
                         throw new Error('Incorrect password');
                     }
-                } catch (error: any) {
-                    throw new Error(error);
+                } catch (err: any) {
+                    throw new Error(err);
                 }
             },
         }),
@@ -70,5 +77,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
     session: {
         strategy: "jwt",
+    },
+
+    pages: {
+        signIn: "/sign-in",
     },
 })

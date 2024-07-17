@@ -31,6 +31,7 @@ export const PatientClient = ({ data }: PatientClientProps) => {
         setOpen(true)
         setLoading(false)
     };
+
     return (
         <>
             <PatientRegisterModal
@@ -52,7 +53,7 @@ export const PatientClient = ({ data }: PatientClientProps) => {
                     </div>
                 </div>
                 <Separator />
-                <DataTable data={data} columns={columns} searchKey='name' />
+                <DataTable data={data} columns={columns} searchKey={'name'} />
             </div>
         </>
     )

@@ -4,7 +4,9 @@ import React from 'react'
 import { auth } from '@/auth'
 import { SignIn } from '@/components/auth/signin-button'
 import { SignOut } from '@/components/auth/signout-button'
+import Link from 'next/link'
 // import { useFetchPatients } from '@/hooks/useFetchPatients'
+
 
 const Homepage = async () => {
   const session = await auth()
@@ -28,6 +30,7 @@ const Homepage = async () => {
       </nav>
       <p>Home Page</p>
       <h1 className="text-3xl font-bold underline">Hello, {session?.user?.username}!</h1>
+      <Link href={"/patients"}>Patients</Link>
     </div>
   )
 }
