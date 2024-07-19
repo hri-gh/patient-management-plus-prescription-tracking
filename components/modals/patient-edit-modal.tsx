@@ -3,21 +3,22 @@ import React, { useEffect, useState } from 'react'
 // UI COMPONENTS
 
 import { Modal } from "@/components/ui/modal";
-import { PatientRegisterForm } from '../patient/patient-register-form';
+import { PatientEditForm } from '../patient/patient-edit-form';
 
 import { PatientData } from '@/types/patient.interface';
 
-interface PatientRegisterModalProps {
+interface PatientEditModalProps {
     isOpen: boolean;
     onClose: () => void;
     loading: boolean;
+    patient: PatientData;
 }
 
-export const PatientRegisterModal: React.FC<PatientRegisterModalProps> = ({
+export const PatientEditModal: React.FC<PatientEditModalProps> = ({
     isOpen,
     onClose,
     loading,
-
+    patient,
 }) => {
     const [isMounted, setIsMounted] = useState(false);
 
@@ -41,7 +42,7 @@ export const PatientRegisterModal: React.FC<PatientRegisterModalProps> = ({
             {loading && (
                 <h1 className=''>Loading...</h1>
             )}
-            <PatientRegisterForm />
+            <PatientEditForm patient={patient} />
         </Modal>
     )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
@@ -19,7 +19,9 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import useDeletePatient from "@/hooks/useDeletePatient";
 import { ifError } from "assert";
 import { usePatientStore } from "@/store/patient-store";
-import { ToastAction } from "@radix-ui/react-toast";
+
+import { PatientEditModal } from "@/components/modals/patient-edit-modal";
+import { PatientData } from "@/types/patient.interface";
 
 interface CellActionProps {
     data: PatientColumn;
@@ -29,13 +31,15 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({
     data
 }) => {
+    const [openEditModal, setOpenEditModal] = useState(false);
+    const [openAlertModal, setOpenAlertModal] = useState(false);
+    // const [loading:eLoading, setLoading] = useState(false);
+
     const router = useRouter()
     const params = useParams()
     const { toast } = useToast()
 
     const { deletePatient: deletePatientFromStore } = usePatientStore();
-
-    const [open, setOpen] = useState(false);
 
     const { deletePatient, error, loading } = useDeletePatient()
 
@@ -51,7 +55,7 @@ export const CellAction: React.FC<CellActionProps> = ({
     const onConfirm = async () => {
 
         try {
-            const response = await deletePatient("");
+            const response = await deletePatient(data._id);
 
             if (!error) {
                 toast({
@@ -60,7 +64,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                     variant: 'success',
                 });
                 deletePatientFromStore(response.deletedPatient._id);
-                setOpen(false);
+                setOpenAlertModal(false);
             }
         } catch (err) {
             console.log("[CELL_ACTION_ERROR_1]::", err);
@@ -80,14 +84,25 @@ export const CellAction: React.FC<CellActionProps> = ({
 
     };
 
+    // const handleEdit = (data: PatientData) => {
+    //     setOpenEditModal(true)
+    // }
+
     return (
         <>
+            <PatientEditModal
+                isOpen={openEditModal}
+                loading={loading}
+                onClose={() => setOpenEditModal(false)}
+                patient={data}
+            />
             <AlertModal
-                isOpen={open}
-                onClose={() => setOpen(false)}
+                isOpen={openAlertModal}
+                onClose={() => setOpenAlertModal(false)}
                 onConfirm={onConfirm}
                 loading={loading}
             />
+
 
             <DropdownMenu>
                 {/* DropdownMenuTrigger */}
@@ -108,12 +123,13 @@ export const CellAction: React.FC<CellActionProps> = ({
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                        onClick={() => router.push(`/${params.storeId}/billboards/${data._id}`)}
+                        // onClick={() => router.push(`/patients/${data._id}/edit`)}
+                        onClick={() => setOpenEditModal(true)}
                     >
                         <Edit className="mr-2 h-4 w-4" /> Update
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                        onClick={() => setOpen(true)}
+                        onClick={() => setOpenAlertModal(true)}
                     >
                         <Trash className="mr-2 h-4 w-4" /> Delete
                     </DropdownMenuItem>

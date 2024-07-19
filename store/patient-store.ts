@@ -16,7 +16,7 @@ interface PatientStore {
     setPatients: (patients: Patient[]) => void;
     addPatient: (user: Patient) => void;
     deletePatient: (id: string) => void;
-    editPatient: (id: string, updatedUser: Partial<Patient>) => void;
+    editPatient: (id: string, updatedPatient: Partial<Patient>) => void;
 }
 
 export const usePatientStore = create<PatientStore>((set) => ({

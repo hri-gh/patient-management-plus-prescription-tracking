@@ -42,25 +42,31 @@ import { usePatientStore } from '@/store/patient-store';
 // ICONS IMPORT
 import { Loader2 } from 'lucide-react'
 
+import { PatientData } from '@/types/patient.interface';
+
+interface PatientsEditFormProps {
+    patient: PatientData
+}
 
 
-export const PatientRegisterForm = () => {
+export const PatientEditForm: React.FC<PatientsEditFormProps> = ({ patient }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const { addPatient } = usePatientStore()
+    const { editPatient } = usePatientStore()
     const { toast } = useToast()
 
     const form = useForm<z.infer<typeof PatientRegisterSchema>>({
         resolver: zodResolver(PatientRegisterSchema),
-        defaultValues: {
-            name: "",
-            email: "",
-            age: undefined,
-            gender: 'other',
-            mobile: undefined,
-            place: "",
-        }
+        defaultValues: patient
+        // {
+        //     name: "",
+        //     email: "",
+        //     age: undefined,
+        //     gender: 'other',
+        //     mobile: undefined,
+        //     place: "",
+        // }
     })
 
     const onSubmit = async (data: z.infer<typeof PatientRegisterSchema>) => {
@@ -70,13 +76,16 @@ export const PatientRegisterForm = () => {
             // Add a delay of 1 second ((1000 milliseconds)) before making the API call
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            const response = await axios.post('/api/patients', data)
-            // TODO: to check response  status is success or not
+            const response = await axios.patch(`/api/patients/${patient._id}`, data)
+            // // TODO: to check response  status is success or not
 
+            // console.log("[EDIT_FORM]::", data)
 
             setSuccess(true)
 
-            addPatient(response.data?.patient)
+            const _id = response.data?.updatedPatient._id
+            const updatedPatient = response.data?.updatedPatient
+            editPatient(_id, updatedPatient)
 
             toast({
                 title: 'Success',
@@ -84,14 +93,14 @@ export const PatientRegisterForm = () => {
                 variant: 'success'
             });
 
-            form.reset({
-                name: "",
-                email: "",
-                age: undefined,
-                gender: 'other',
-                mobile: undefined,
-                place: "",
-            });
+            // form.reset({
+            //     name: "",
+            //     email: "",
+            //     age: undefined,
+            //     gender: 'other',
+            //     mobile: undefined,
+            //     place: "",
+            // });
 
 
 
@@ -102,7 +111,7 @@ export const PatientRegisterForm = () => {
 
             // Default error message
             let errorMessage = axiosError.response?.data.message;
-            ('There was a problem with your sign-up. Please try again.');
+            ('There was a problem with your request. Please try again.');
 
             toast({
                 title: 'Register Failed',
@@ -123,7 +132,7 @@ export const PatientRegisterForm = () => {
 
             <div className="text-center">
                 <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl mb-6">
-                    Register a New patient
+                    Edit patient details
                 </h1>
             </div>
 
@@ -180,9 +189,14 @@ export const PatientRegisterForm = () => {
                                         {...field}
                                         placeholder="99"
                                         type='number'
-                                        // value={Number(field.value) || 0}
-                                        value={field.value !== undefined ? field.value : ''}
-                                        onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
+                                        // value={Number(field.value)}
+                                        // value={field.value !== undefined ? field.value : ''}
+                                        value={field.value !== undefined && field.value !== null ? field.value : ''}
+                                        // onChange={(e) => field.onChange(Number(e.target.value))}
+                                        onChange={(e) => {
+                                            const newValue = e.target.value === '' ? null : Number(e.target.value);
+                                            field.onChange(newValue);
+                                        }}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -225,9 +239,14 @@ export const PatientRegisterForm = () => {
                                         {...field}
                                         placeholder="99999 99999"
                                         type='number'
-                                        // value={Number(field.value) || 0}
-                                        value={field.value !== undefined ? field.value : ''}
-                                        onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
+                                    // value={Number(field.value) || 0}
+                                    // value={field.value !== undefined ? field.value : ''}
+                                    // onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
+                                    value={field.value !== undefined && field.value !== null ? field.value : ''}
+                                    onChange={(e) => {
+                                        const newValue = e.target.value === '' ? null : Number(e.target.value);
+                                        field.onChange(newValue);
+                                    }}
 
                                     />
                                 </FormControl>
@@ -261,7 +280,7 @@ export const PatientRegisterForm = () => {
                                 Please wait
                             </>
                         ) : (
-                            success ? <><CircleCheckBig className='mr-1' /><p>Registered</p> </> : 'Register'
+                            success ? <><CircleCheckBig className='mr-1' /><p>Updated</p> </> : 'Update'
                         )}
                         {/* {success && <ProgressBar shape="fill-circular" duration={20} onComplete={() => setSuccess(false)} />} */}
                     </Button>

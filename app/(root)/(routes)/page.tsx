@@ -11,7 +11,7 @@ import Link from 'next/link'
 const Homepage = async () => {
   const session = await auth()
 
-  console.log("[ROOT_PAGE_SESSION::]", session)
+  //console.log("[ROOT_PAGE_SESSION::]", session)
   // const { data, loading, error, refetch } = useFetchPatients()
 
   // if (loading) return <p>Loading...</p>;

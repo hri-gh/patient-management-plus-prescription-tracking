@@ -4,14 +4,21 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./cell-action";
 import { DataTableColumnHeader } from "@/components/ui/data-table/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox"
+
+import RowAction from "./row-action";
+import { format } from "date-fns";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type PatientColumn = {
     _id: string;
     name: string;
     mobile: number,
+    email: string,
+    age: number,
+    gender: 'male' | 'female' | 'other',
     place: string,
-    // createdAt: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export const columns: ColumnDef<PatientColumn>[] = [
@@ -40,7 +47,8 @@ export const columns: ColumnDef<PatientColumn>[] = [
         accessorKey: "name",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Name" />
-        )
+        ),
+        cell: ({ row }) => <RowAction data={row.original} />
     },
     {
         accessorKey: "mobile",
@@ -50,10 +58,24 @@ export const columns: ColumnDef<PatientColumn>[] = [
         accessorKey: "place",
         header: "Place",
     },
-    // {
-    //     accessorKey: "createdAt",
-    //     header: "Date",
-    // },
+    {
+        accessorKey: "createdAt",
+        header: "Created",
+        cell: ({ row }) => {
+            const date = (row.getValue("createdAt") as Date)
+            const formattedDate = format(date, 'MMMM do , yyyy');
+            return formattedDate;
+        }
+    },
+    {
+        accessorKey: "updatedAt",
+        header: "Updated",
+        cell: ({ row }) => {
+            const date = (row.getValue("updatedAt") as Date)
+            const formattedDate = format(date, 'MMMM do , yyyy');
+            return formattedDate;
+        }
+    },
     {
         id: "actions",
         cell: ({ row }) => <CellAction data={row.original} /> // This 'row' is not related to ShadcnUI, it's related to tanstack/react-table

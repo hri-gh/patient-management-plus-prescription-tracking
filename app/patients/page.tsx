@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { useEffect } from 'react'
+import { format } from "date-fns";
 
 // COMPONENTS
 import { PatientClient } from './components/client'
@@ -35,7 +36,14 @@ const PatientsPage = () => {
     _id: patient._id,
     name: patient.name,
     mobile: patient.mobile,
+    email: patient.email,
+    age: patient.age,
+    gender: patient.gender,
     place: patient.place,
+    // createdAt: format(patient.createdAt, 'MMMM do , yyyy'),
+    // updatedAt: format(patient.updatedAt, 'MMMM do , yyyy'),
+    createdAt: patient.createdAt,
+    updatedAt: patient.updatedAt,
   }))
 
 

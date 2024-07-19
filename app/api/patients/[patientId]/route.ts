@@ -91,7 +91,7 @@ export async function PATCH(
             return Response.json({ success: false, message: "Patient not found" }, { status: 404 });
         }
 
-        return Response.json({ success: true, message: 'Patient updated successfully.' }, { status: 200 });
+        return Response.json({ success: true, message: 'Patient updated successfully.', updatedPatient: patient }, { status: 200 });
 
 
     } catch (error) {

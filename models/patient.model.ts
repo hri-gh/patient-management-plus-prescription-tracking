@@ -30,7 +30,7 @@ const PatientSchema: Schema<PatientDocument> = new mongoose.Schema({
         required: [true, 'Gender is required'],
     }
 
-});
+}, { timestamps: true });
 
 const PatientModel =
     (mongoose.models.Patient as mongoose.Model<PatientDocument>) ||
