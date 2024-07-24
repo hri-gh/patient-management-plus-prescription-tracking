@@ -1,10 +1,10 @@
-import NextAuth from "next-auth"
+import { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials"
-import dbConnect from "./lib/db-connect"
-import AdminModel from "./models/admin.model";
+import dbConnect from "@/lib/db-connect";
+import AdminModel from "@/models/admin.model";
 import bcrypt from 'bcryptjs';
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const authOptions: NextAuthOptions = {
     providers: [
         Credentials({
             name: "Credentials",
@@ -19,7 +19,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     type: "password",
                 },
             },
-            authorize: async (credentials:any): Promise<any> => {
+            authorize: async (credentials: any): Promise<any> => {
                 console.log(credentials)
                 await dbConnect()
                 try {
@@ -68,10 +68,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return session
         },
 
-        authorized: async ({ auth }) => {
-            // // Logged in users are authenticated, otherwise redirect to login page
-            return !!auth
-        },
+        // authorized: async ({ auth }) => {
+        //     // // Logged in users are authenticated, otherwise redirect to login page
+        //     return !!auth
+        // },
     },
 
     secret: process.env.NEXTAUTH_SECRET,
@@ -82,4 +82,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     pages: {
         signIn: "/sign-in",
     },
-})
+}

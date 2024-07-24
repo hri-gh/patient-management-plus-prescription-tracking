@@ -1,12 +1,26 @@
 import dbConnect from "@/lib/db-connect";
 import PatientModel from "@/models/patient.model";
 import { Patient } from "@/types/patient.interface";
-import { auth } from "@/auth";
+
+import { authOptions } from "../auth/[...nextauth]/options";
+
+import { getServerSession } from "next-auth";
+import { User } from "next-auth";
+
+
 // import { NextApiRequest, NextApiResponse } from "next";
 // import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(req: Request) {
     await dbConnect();
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+        return Response.json(
+            { success: false, message: 'Unauthorized' },
+            { status: 401 }
+        );
+    }
 
     try {
         const reqBody: Patient = await req.json();
@@ -37,17 +51,25 @@ export async function POST(req: Request) {
 }
 
 
-export const GET = auth(async function GET(req) {
-    try {
-        if (req.auth) {
-            await dbConnect();
-            const patients = await PatientModel.find()
-            return Response.json(patients);
-        }
+export async function GET(req: Request) {
+    await dbConnect();
+    const session = await getServerSession(authOptions);
+    const _user: User = session?.user
 
-        return Response.json({ message: 'Not authenticated', success: false }, { status: 401 });
+    if (!session || !_user) {
+        return Response.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
+
+    try {
+
+
+        const patients = await PatientModel.find()
+        return Response.json(patients);
+
+        //return Response.json({success: false, message: 'Not authenticated' }, { status: 401 });
     } catch (error) {
         console.log('[PATIENTS_GET]', error);
-        return Response.json({ message: 'Internal server error', success: false }, { status: 500 });
+        return Response.json({ success: false, message: 'Internal server error' }, { status: 500 });
     }
-});
+};

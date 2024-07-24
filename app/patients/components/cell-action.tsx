@@ -53,40 +53,28 @@ export const CellAction: React.FC<CellActionProps> = ({
     }
 
     const onConfirm = async () => {
+        const response = await deletePatient(data._id);
 
-        try {
-            const response = await deletePatient(data._id);
+        if (response?.data.deletedPatient) {
+            toast({
+                title: 'Patient Deleted',
+                description: response?.data.message,
+                variant: 'success',
+            });
+            deletePatientFromStore(response.data.deletedPatient._id);
 
-            if (!error) {
-                toast({
-                    title: 'Patient Deleted',
-                    description: response?.message,
-                    variant: 'success',
-                });
-                deletePatientFromStore(response.deletedPatient._id);
-                setOpenAlertModal(false);
-            }
-        } catch (err) {
-            console.log("[CELL_ACTION_ERROR_1]::", err);
-        }
-
-        if (error) {
-            const errorMessage = error.message || 'Error while deletingPPP. Please try again.';
-
+            setOpenAlertModal(false);
+        } else {
             toast({
                 title: 'Deletion failed',
-                description: errorMessage,
+                description: error?.message,
                 variant: 'destructive',
             });
+
+            setOpenAlertModal(false);
         }
-
-        // setOpen(false);
-
     };
 
-    // const handleEdit = (data: PatientData) => {
-    //     setOpenEditModal(true)
-    // }
 
     return (
         <>

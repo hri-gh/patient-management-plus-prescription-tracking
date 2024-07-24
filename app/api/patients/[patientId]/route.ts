@@ -1,30 +1,29 @@
 import dbConnect from "@/lib/db-connect";
 import PatientModel from "@/models/patient.model";
 import { Patient } from "@/types/patient.interface";
-import { auth } from "@/auth";
 
 export async function GET(
     request: Request,
     { params }: { params: { patientId: string } }
 ) {
     try {
-        const session = await auth()
-        if (session) {
-            await dbConnect();
-            const patientId = params.patientId
-            if (!patientId) {
-                return Response.json({ success: false, message: "Patient id is required" }, { status: 404 })
-            }
-
-            const patient = await PatientModel.findById(patientId);
-
-            if (!patient) {
-                return Response.json({ success: false, message: "Patient not found" }, { status: 404 })
-            }
-
-            return Response.json(patient)
+        // const session = await auth()
+        // if (session) {
+        await dbConnect();
+        const patientId = params.patientId
+        if (!patientId) {
+            return Response.json({ success: false, message: "Patient id is required" }, { status: 404 })
         }
-        return Response.json({ message: 'Not authenticated', success: false }, { status: 401 });
+
+        const patient = await PatientModel.findById(patientId);
+
+        if (!patient) {
+            return Response.json({ success: false, message: "Patient not found" }, { status: 404 })
+        }
+
+        return Response.json(patient, { status: 200 })
+        // }
+        // return Response.json({ message: 'Not authenticated', success: false }, { status: 401 });
     } catch (error) {
         // console.error('Error registering patient:', error);
         return Response.json({ message: 'Internal server error', success: false }, { status: 500 });
@@ -51,8 +50,8 @@ export async function DELETE(
 
         return Response.json({ success: true, message: 'Patient deleted successfully.', deletedPatient: patient }, { status: 200 });
     } catch (error) {
-        console.error('[PATIENT_DELETE]', error);
-        return Response.json({ success: false, message: 'Error deleting patient', }, { status: 500 });
+        // console.error('[PATIENT_DELETE]', error);
+        return Response.json({ success: false, message: 'Something went wrong', }, { status: 500 });
     }
 }
 

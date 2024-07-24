@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ApiResponse } from '@/types/api-response';
 
-const useDeletePatient = () => {
+const useDeletePatient = <T>() => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<ApiResponse | null>(null);
 
@@ -13,7 +13,7 @@ const useDeletePatient = () => {
         try {
             const response = await axios.delete(`/api/patients/${id}`);
             setLoading(false);
-            return response.data;
+            return response;
         } catch (err) {
             setLoading(false);
             const axiosError = err as AxiosError<ApiResponse>;
@@ -21,12 +21,11 @@ const useDeletePatient = () => {
             // Default error message
             let errorMessage = axiosError.response?.data || {
                 success: false,
-                message: 'Error while deleting. Please try again.'
+                message: 'An error occurred while trying to delete the patient.',
             };
 
             // Set error message
             setError(errorMessage);
-            // throw new Error(errorMessage.message); // Re-throw the error to be caught in the component
         }
     };
 

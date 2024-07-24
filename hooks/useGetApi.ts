@@ -17,10 +17,6 @@ const useGetApi = <T>(url: string, config?: AxiosRequestConfig) => {
             const response = await axios.get<T>(url, { ...config, cancelToken: source.token });
             setData(response.data);
         } catch (err) {
-            // if (!axios.isCancel(err)) {
-
-            //     setError(err);
-            // }
             if (axios.isCancel(err)) {
                 // If the request was canceled, do not set an error
                 return;
