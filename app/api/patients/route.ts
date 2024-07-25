@@ -1,25 +1,16 @@
 import dbConnect from "@/lib/db-connect";
 import PatientModel from "@/models/patient.model";
 import { Patient } from "@/types/patient.interface";
+import { authenticate } from "@/helpers/auth";
 
-import { authOptions } from "../auth/[...nextauth]/options";
-
-import { getServerSession } from "next-auth";
-import { User } from "next-auth";
-
-
-// import { NextApiRequest, NextApiResponse } from "next";
-// import { NextResponse, NextRequest } from "next/server";
 
 export async function POST(req: Request) {
     await dbConnect();
-    const session = await getServerSession(authOptions);
 
-    if (!session) {
-        return Response.json(
-            { success: false, message: 'Unauthorized' },
-            { status: 401 }
-        );
+    const authResult = await authenticate(req)
+    if ('status' in authResult) {
+        return Response.json(authResult, { status: authResult.status })
+
     }
 
     try {
@@ -53,13 +44,12 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
     await dbConnect();
-    const session = await getServerSession(authOptions);
-    const _user: User = session?.user
 
-    if (!session || !_user) {
-        return Response.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    const authResult = await authenticate(req)
+    if ('status' in authResult) {
+        return Response.json(authResult, { status: authResult.status })
+
     }
-
 
     try {
 

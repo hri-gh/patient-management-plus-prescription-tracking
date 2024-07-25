@@ -1,15 +1,20 @@
 import dbConnect from "@/lib/db-connect";
 import PatientModel from "@/models/patient.model";
 import { Patient } from "@/types/patient.interface";
+import { authenticate } from "@/helpers/auth";
 
 export async function GET(
-    request: Request,
+    req: Request,
     { params }: { params: { patientId: string } }
 ) {
+    await dbConnect();
+
+    const authResult = await authenticate(req)
+    if ('status' in authResult) {
+        return Response.json(authResult, { status: authResult.status })
+    }
+
     try {
-        // const session = await auth()
-        // if (session) {
-        await dbConnect();
         const patientId = params.patientId
         if (!patientId) {
             return Response.json({ success: false, message: "Patient id is required" }, { status: 404 })
@@ -22,8 +27,6 @@ export async function GET(
         }
 
         return Response.json(patient, { status: 200 })
-        // }
-        // return Response.json({ message: 'Not authenticated', success: false }, { status: 401 });
     } catch (error) {
         // console.error('Error registering patient:', error);
         return Response.json({ message: 'Internal server error', success: false }, { status: 500 });
@@ -32,10 +35,16 @@ export async function GET(
 
 
 export async function DELETE(
-    request: Request,
+    req: Request,
     { params }: { params: { patientId: string } }
 ) {
     await dbConnect();
+
+    const authResult = await authenticate(req)
+    if ('status' in authResult) {
+        return Response.json(authResult, { status: authResult.status })
+    }
+
     try {
         const patientId = params.patientId
         if (!patientId) {
@@ -57,15 +66,20 @@ export async function DELETE(
 
 
 export async function PATCH(
-    request: Request,
+    req: Request,
     { params }: { params: { patientId: string } }
 ) {
     await dbConnect();
 
+    const authResult = await authenticate(req)
+    if ('status' in authResult) {
+        return Response.json(authResult, { status: authResult.status })
+    }
+
     try {
         const patientId = params.patientId
 
-        const reqBody: Patient = await request.json();
+        const reqBody: Patient = await req.json();
         const { name, mobile, email, age, gender, place, } = reqBody;
 
         if (!name || !mobile || !email || !age || !gender || !place)

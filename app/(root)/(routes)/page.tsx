@@ -1,7 +1,6 @@
 
 
 import React from 'react'
-import { auth } from '@/auth'
 // import { SignIn } from '@/components/auth/signin-button'
 // import { SignOut } from '@/components/auth/signout-button'
 import Link from 'next/link'
