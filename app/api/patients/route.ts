@@ -52,12 +52,8 @@ export async function GET(req: Request) {
     }
 
     try {
-
-
         const patients = await PatientModel.find()
         return Response.json(patients);
-
-        //return Response.json({success: false, message: 'Not authenticated' }, { status: 401 });
     } catch (error) {
         console.log('[PATIENTS_GET]', error);
         return Response.json({ success: false, message: 'Internal server error' }, { status: 500 });
