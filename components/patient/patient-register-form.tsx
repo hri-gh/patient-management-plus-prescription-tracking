@@ -73,17 +73,21 @@ export const PatientRegisterForm = () => {
             const response = await axios.post('/api/patients', data)
             // TODO: to check response  status is success or not
 
-
-            setSuccess(true)
-
-            addPatient(response.data?.patient)
-
-            toast({
-                title: 'Success',
-                description: response.data.message,
-                variant: 'success'
-            });
-
+            if (response?.data.patient) {
+                setSuccess(true)
+                addPatient(response.data?.patient)
+                toast({
+                    title: 'Success',
+                    description: response.data.message,
+                    variant: 'success'
+                });
+            } else {
+                setSuccess(false)
+                toast({
+                    title: "Error",
+                    description: "Something went wrong",
+                })
+            }
             form.reset({
                 name: "",
                 email: "",

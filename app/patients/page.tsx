@@ -18,9 +18,10 @@ import { usePatientStore } from '@/store/patient-store'
 import { PatientData } from '@/types/patient.interface'
 
 
-const PatientsPage = () => {
-  const { data, error, loading, refetch } = useFetchPatients()
 
+const PatientsPage = () => {
+
+  const { data, error, loading, refetch } = useFetchPatients()
   const { setPatients, patients } = usePatientStore()
 
   useEffect(() => {

@@ -8,11 +8,11 @@ interface ModalState {
     setLoading: (loading: boolean) => void;
 }
 
-const usePrescriptionModalStore = create<ModalState>((set) => ({
+const usePrescriptionInfoModalStore = create<ModalState>((set) => ({
     open: false,
     loading: false,
     setOpen: (open) => set({ open }),
     setLoading: (loading) => set({ loading }),
 }));
 
-export default usePrescriptionModalStore;
+export default usePrescriptionInfoModalStore;

@@ -14,7 +14,7 @@ const RowAction = ({ data }: { data: PatientColumn }) => {
     const params = useParams()
     return (
         <>
-            <div onClick={() => router.push(`/patients/${data._id}`)} className="cursor-pointer  hover:text-sky-500 hover:underline">{data.name}</div>
+            <div onClick={() => router.push(`/patients/${data._id}/prescriptions`)} className="cursor-pointer  hover:text-sky-500 hover:underline">{data.name}</div>
         </>
     )
 }

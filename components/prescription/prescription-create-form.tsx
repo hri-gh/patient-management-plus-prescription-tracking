@@ -30,9 +30,11 @@ import { Combobox } from '@/components/ui/combobox'
 import React, { MouseEvent } from "react"
 import { Separator } from "../ui/separator"
 import { Input } from "../ui/input"
-import { CirclePlus } from 'lucide-react';
+import { CirclePlus, CircleCheckBig, Loader2 } from 'lucide-react';
 import { useParams } from "next/navigation"
-import usePrescriptionModalStore from "@/store/prescription-modal-store"
+import usePrescriptionCreateModalStore from "@/store/prescription-create-modal-store"
+import { usePrescriptionStore } from "@/store/prescription-store"
+import { ProgressBar } from "../progress-bar"
 
 const drugs = [
   { label: "Aspirin", value: "aspirin" },
@@ -99,7 +101,8 @@ export function PrescriptionForm() {
 
 
   const params = useParams()
-  const { setOpen } = usePrescriptionModalStore()
+  const { addPrescription } = usePrescriptionStore()
+  const { setOpen } = usePrescriptionCreateModalStore()
 
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -117,23 +120,29 @@ export function PrescriptionForm() {
         paidAmount: paidAmount,
         dueAmount: dueAmount,
       },
-      ownerId: params.patientId
     }
 
     try {
       // Add a delay of 1 second ((1000 milliseconds)) before making the API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const response = await axios.post('/api/prescriptions', data)
-
-      setSuccess(true)
-
+      const response = await axios.post(`/api/patients/${params.patientId}/prescriptions`, data)
       console.log("PRESCRIPTION_FORM_RESPONSE::", response)
 
-      toast({
-        title: 'Success',
-        description: response.data.message,
-        variant: 'success'
-      });
+      if (response?.data.prescription) {
+        setSuccess(true)
+        addPrescription(response.data?.prescription)
+        toast({
+          title: 'Success',
+          description: response.data.message,
+          variant: 'success'
+        });
+      } else {
+        setSuccess(false)
+        toast({
+          title: "Error",
+          description: "Something went wrong",
+        })
+      }
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
 
@@ -149,8 +158,6 @@ export function PrescriptionForm() {
     } finally {
       setIsSubmitting(false);
     }
-
-    // console.log("MAIN_DATA:", data)
     // setOpen(false)
   }
 
@@ -378,13 +385,33 @@ export function PrescriptionForm() {
               <CirclePlus className="w-4" />Add
             </Button>
           </div>
-          <Button onClick={(e: MouseEvent) => {
+          <Button
+            disabled={isSubmitting}
+            onClick={(e: MouseEvent) => {
+              e.preventDefault()
+              handleSubmit()
+            }}
+            className={`my-5 h-10 gap-1 ${success && 'bg-green-500'}`}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </>
+            ) : (
+              success ? <><CircleCheckBig className='mr-1' /><p>Added</p> </> : 'Submit'
+            )}
+            {/* {success && <ProgressBar shape="fill-circular" duration={20} onComplete={() => setSuccess(false)} />} */}
+          </Button>
+          <br />
+          {success && <ProgressBar shape="line" duration={5} onComplete={() => setSuccess(false)} />}
+
+          {/* <Button onClick={(e: MouseEvent) => {
             e.preventDefault()
             handleSubmit()
           }}
             className="my-5 h-10 gap-1">
             Submit
-          </Button>
+          </Button> */}
         </form>
       </Form>
 

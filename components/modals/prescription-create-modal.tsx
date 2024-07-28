@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 // UI COMPONENTS
 
 import { Modal } from "@/components/ui/modal";
-import { PrescriptionForm } from '../prescription/prescription-form';
+import { PrescriptionForm } from '../prescription/prescription-create-form';
 
 
 interface PrescriptionModalProps {
@@ -12,7 +12,7 @@ interface PrescriptionModalProps {
     loading: boolean;
 }
 
-export const PrescriptionModal: React.FC<PrescriptionModalProps> = ({
+export const PrescriptionCreateModal: React.FC<PrescriptionModalProps> = ({
     isOpen,
     onClose,
     loading,

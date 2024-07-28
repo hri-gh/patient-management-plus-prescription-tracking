@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
-import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
+import { Copy, Edit, MoreHorizontal, Trash, User } from "lucide-react";
 import { ApiResponse } from "@/types/api-response";
 
 import {
@@ -104,6 +104,12 @@ export const CellAction: React.FC<CellActionProps> = ({
                 {/* DropdownMenuContent */}
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuItem
+                        onClick={() => router.push(`/patients/${data._id}`)}
+                    >
+                        <User className="mr-2 h-4 w-4" /> Profile
+                    </DropdownMenuItem>
+
                     <DropdownMenuItem
                         onClick={() => onCopy(data._id)}
                     >
