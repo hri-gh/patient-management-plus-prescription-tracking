@@ -387,7 +387,7 @@ export function PrescriptionForm() {
           </div>
           <Button
             disabled={isSubmitting}
-            onClick={(e: MouseEvent) => {
+            onClick={(e: React.MouseEvent) => {
               e.preventDefault()
               handleSubmit()
             }}

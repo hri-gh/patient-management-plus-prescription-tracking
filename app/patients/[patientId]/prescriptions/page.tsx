@@ -28,8 +28,6 @@ const Patient = ({ params }: { params: { patientId: string } }) => {
         }
     }, [data]);
 
-console.log(prescriptions)
-
     const handlePrescriptionCreateModal = () => {
         setLoading(true);
         setOpen(true)
