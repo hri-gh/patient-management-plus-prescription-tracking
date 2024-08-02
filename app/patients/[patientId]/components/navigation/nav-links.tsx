@@ -29,7 +29,7 @@ export default function NavLinks() {
                             href={link.href}
                             className={clsx(
                                 // For hidden in mobile device :: hidden md:flex
-                                "flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-300 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3",
+                                "flex h-[48px] grow items-center dark:text-gray-700 justify-center gap-2 rounded-md bg-gray-300 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3",
                                 {
                                     'bg-sky-200 text-blue-600': pathname === link.href,
                                 },

@@ -22,7 +22,11 @@ import {
 } from "@/components/ui/form"
 
 import { toast } from "@/components/ui/use-toast"
-
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Combobox } from '@/components/ui/combobox'
 import React, { MouseEvent } from "react"
 import { Separator } from "../ui/separator"
@@ -48,16 +52,16 @@ const drugs = [
 ]
 
 const quantity = [
-  { label: "1 Tab", value: "1 tab" },
-  { label: "2 Tab", value: "2 tab" },
-  { label: "3 Tab", value: "3 tab" },
-  { label: "4 Tab", value: "4 tab" },
-  { label: "5 Tab", value: "5 tab" },
-  { label: "6 Tab", value: "6 tab" },
-  { label: "7 Tab", value: "7 tab" },
-  { label: "8 Tab", value: "8 tab" },
-  { label: "9 Tab", value: "9 tab" },
-  { label: "10 Tab", value: "10 tab" }
+  { label: "1 Tab", value: "1tab" },
+  { label: "2 Tab", value: "2tab" },
+  { label: "3 Tab", value: "3tab" },
+  { label: "4 Tab", value: "4tab" },
+  { label: "5 Tab", value: "5tab" },
+  { label: "6 Tab", value: "6tab" },
+  { label: "7 Tab", value: "7tab" },
+  { label: "8 Tab", value: "8tab" },
+  { label: "9 Tab", value: "9tab" },
+  { label: "10 Tab", value: "10tab" }
 ]
 
 
@@ -182,76 +186,17 @@ export function PrescriptionForm() {
     setDueAmount(totalAmount - paid);
   };
 
-  // console.log("LIST:", list)
-  // console.log("Amount:", totalAmount)
-  // console.log("Paid_Amount:", paidAmount)
-  // console.log("Due_Amount:", dueAmount)
-
-  // {
-  //   "drug": "paracetamol",
-  //     "quantity": "2",
-  //       "price": 20
-  // }
-
-  //   {
-  //     "drugs":[
-  //         {
-  //         "drugName":"drug-1",
-  //         "quantity":10,
-  //         "price":2,
-  //         }
-  //     ],
-  //     "payment":{"amount":500, "paid":300, "due":200},
-  //     "owner":"667294cca65ecb9d56abc515"
-  // }
-
-  // {
-  //   "_id": "66729a29a65ecb9d56abc517",
-  //   "drugs": [
-  //     {
-  //         "drugName":"drug-1",
-  //         "quantity":10,
-  //         "price":2,
-  //         "_id":"66729a29a65ecb9d56abc518",
-  //     }
-  //   ],
-  //    "payment": {
-  //     "amount": 500,
-  //     "paid": 300,
-  //     "due": 200,
-  //   },
-  //   "owner": "667294cca65ecb9d56abc514" ,
-  // }
-
-
   return (
     <>
       <Form {...form} >
         <form onSubmit={form.handleSubmit(onSubmit)} className="">
           <div className=" flex gap-2 my-2">
+
             {/* TOTAL AMOUNT FIELD */}
             <div className="flex flex-col">
               <FormLabel>Total Amount</FormLabel>
               <Input value={totalAmount} disabled={true} />
             </div>
-            {/* <FormField
-              control={form.control}
-              name="total_amount"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Total Amount</FormLabel>
-                  <Input placeholder="Amount" disabled={true} type="number" {...field}
-                    value={Number(amount) || 0}
-                  // value={field.value !== undefined ? field.value : ''}
-                  // onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
-                  />
-                  <FormDescription>
-
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
 
             {/* PAID AMOUNT FIELD */}
 
@@ -261,48 +206,12 @@ export function PrescriptionForm() {
                 onChange={(e) => handlePaidAmountChange(Number(e.target.value))}
               />
             </div>
-            {/* <FormField
-              control={form.control}
-              name="paid"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Paid</FormLabel>
-                  <Input placeholder="Paid" type="number" {...field}
-                    // value={Number(field.value) || 0}
-                    value={field.value !== undefined ? field.value : ''}
-                    onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
-                  />
-                  <FormDescription>
-
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
 
             {/* DUE AMOUNT FIELD */}
             <div className="flex flex-col">
               <FormLabel>Due</FormLabel>
               <Input value={dueAmount} disabled={true} />
             </div>
-            {/* <FormField
-              control={form.control}
-              name="due"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Due</FormLabel>
-                  <Input placeholder="Due" type="number" {...field}
-                    // value={Number(field.value) || 0}
-                    value={field.value !== undefined ? field.value : ''}
-                    onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
-                  />
-                  <FormDescription>
-
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />*/}
 
           </div>
 
@@ -338,6 +247,7 @@ export function PrescriptionForm() {
                     placeholder='Select quantity'
                     {...field}
                   />
+
                   <FormDescription>
 
                   </FormDescription>

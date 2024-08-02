@@ -31,8 +31,8 @@ export default function SideNav() {
       <div className="flex h-full flex-col px-3 py-4 md:px-2 ">
 
         {/* removed md:h-40 for below div*/}
-        <div className="mb-2 p-2  flex h-auto items-center justify-center rounded-md bg-yellow-500 ">
-          <div className="w-32 text-white md:w-40">
+        <div className="mb-2 p-2 flex h-auto items-center justify-center rounded-md  bg-sky-700">
+          <div className="w-32 md:w-40">
             {loading && "Loading..."}
             {data && <ProfileCard patient={data} />}
           </div>

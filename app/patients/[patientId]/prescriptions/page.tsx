@@ -13,7 +13,7 @@ import { usePrescriptionStore } from '@/store/prescription-store';
 import { useFetchPrescriptions } from '@/hooks/useFetchPrescriptions';
 import PrescriptionList from '@/components/prescription/prescription-list';
 
-const year = [
+const years = [
     { label: '2023', value: '2023' },
     { label: '2022', value: '2022' },
     { label: '2021', value: '2021' },
@@ -21,6 +21,7 @@ const year = [
 
 
 const Patient = ({ params }: { params: { patientId: string } }) => {
+    const [year, setYear] = useState("")
 
     const { data, error, loading, refetch } = useFetchPrescriptions(params.patientId)
     const { prescriptions, setPrescriptions } = usePrescriptionStore()
@@ -39,6 +40,8 @@ const Patient = ({ params }: { params: { patientId: string } }) => {
         setLoading(false)
     }
 
+    console.log(year)
+
     return (
         <div>
             {/* <ProfileDetails /> */}
@@ -49,12 +52,13 @@ const Patient = ({ params }: { params: { patientId: string } }) => {
                 onClose={() => setOpen(false)}
             />
             <div className='flex flex-wrap md:justify-between justify-center gap-2'>
-            <Button onClick={handlePrescriptionCreateModal}><Plus />Create New Prescription</Button>
-            <Combobox options={year}
-                placeholder='Select year'
-                onChange={() => { }}
-                value=''
-            />
+                <Button onClick={handlePrescriptionCreateModal}><Plus />Create New Prescription</Button>
+                <Combobox
+                    options={years}
+                    placeholder='Select year'
+                    onChange={(value) => setYear(value)}
+                    value={year}
+                />
             </div>
             <Separator className='my-4' />
             <PrescriptionList />

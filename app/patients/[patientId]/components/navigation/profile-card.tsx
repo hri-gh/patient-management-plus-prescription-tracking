@@ -14,8 +14,9 @@ import { useState } from 'react';
 
 // import { MovingBorderButton } from '@/components/custom-ui/moving-border';
 import { PatientData } from '@/types/patient.interface';
+import { Separator } from '@/components/ui/separator';
 
-export default function ProfileCard({patient}:{patient:PatientData}) {
+export default function ProfileCard({ patient }: { patient: PatientData }) {
 
     return (
         <div
@@ -35,8 +36,8 @@ export default function ProfileCard({patient}:{patient:PatientData}) {
             /> */}
 
             <div className='text-center'>
-                <p className="text-center text-xl font-medium">{patient.name}</p>
-
+                <p className="text-center text-2xl font-bold">{patient.name}</p>
+                {/* <Separator /> */}
                 <p className="text-sm">
                     <strong>Age: </strong>
                     {patient.age}
@@ -49,7 +50,7 @@ export default function ProfileCard({patient}:{patient:PatientData}) {
 
                 <p className="text-sm m-0">
                     <strong>Email: </strong>
-                    {patient.email?patient.email:"No email"}
+                    {patient.email ? patient.email : "No email"}
                 </p>
 
                 <p className="text-sm m-0">

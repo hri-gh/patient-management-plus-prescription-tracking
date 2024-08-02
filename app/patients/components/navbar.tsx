@@ -8,6 +8,7 @@ import { HomeIcon, HospitalIcon, MenuIcon, PlusIcon } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { PatientRegisterModal } from '@/components/modals/patient-register-modal';
 import { UserNav } from '@/components/user-nav';
+import { ThemeToggleButton } from '@/components/theme-toggle-button';
 
 const Navbar = () => {
     const [open, setOpen] = useState(false);
@@ -63,6 +64,7 @@ const Navbar = () => {
                     </nav>
                 </div>
                 <div className="flex items-center space-x-4">
+                    <ThemeToggleButton/>
                     {/* <Button variant="default" className="block">
                         Add New Patient
                     </Button> */}

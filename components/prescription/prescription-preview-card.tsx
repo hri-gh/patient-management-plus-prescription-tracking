@@ -33,10 +33,11 @@ const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdi
 
     return (
         <>
-            <Card className="w-full cursor-pointer" onClick={onClick}>
+            <Card className="cursor-pointer w-full max-w-sm m-2 border-2  hover:shadow-indigo-500"
+                onClick={onClick}>
                 <CardHeader className="flex items-center justify-between bg-muted/50 px-6 py-2">
                     <div className="grid gap-1">
-                        <CardTitle className="text-lg font-medium">Id #{prescription._id}</CardTitle>
+                        <CardTitle className="text-sm lg:text-lg font-medium ">Id: {prescription._id}</CardTitle>
                         {/* <CardDescription className="text-sm text-muted-foreground">Filled on November 23, 2023</CardDescription> */}
                     </div>
                     <div className="flex items-center gap-2">
