@@ -7,14 +7,16 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Download, Printer, SquarePen, Trash, Trash2, IndianRupee } from "lucide-react"
 import { Prescription } from '@/store/prescription-store';
 
+
 interface Props {
     prescription: Prescription;
     onClick: () => void;
     onEdit: () => void;
+    onDelete: () => void;
 }
 
 
-const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdit }) => {
+const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdit, onDelete }) => {
 
     const isoDate = prescription.createdAt
     const date = new Date(isoDate);
@@ -69,6 +71,7 @@ const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdi
                         <Button
                             onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation()
+                                onDelete()
                             }}
                             variant="outline" size="icon" className="h-8 w-8">
                             <Trash2 className="h-4 w-4 text-red-500" />

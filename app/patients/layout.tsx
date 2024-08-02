@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-
+import Navbar from './components/navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default async function PatientsLayout({
 
     return (
         <>
-            <h1>Patients Nav</h1>
+            <Navbar/>
             {children}
         </>
     );

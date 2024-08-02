@@ -13,6 +13,8 @@ import { PatientData as Patient } from '@/types/patient.interface';
 
 interface PatientStore {
     patients: Patient[];
+    selectedPatient: Patient | null,
+    setSelectedPatient: (patient: Patient | null) => void;
     setPatients: (patients: Patient[]) => void;
     addPatient: (user: Patient) => void;
     deletePatient: (id: string) => void;
@@ -21,6 +23,8 @@ interface PatientStore {
 
 export const usePatientStore = create<PatientStore>((set) => ({
     patients: [],
+    selectedPatient: null,
+    setSelectedPatient: (patient) => set({ selectedPatient: patient }),
     setPatients: (patients) => set({ patients }),
     addPatient: (patient) => set((state) => ({ patients: [...state.patients, patient] })),
     deletePatient: (id) => set((state) => ({ patients: state.patients.filter(patient => patient._id !== id) })),

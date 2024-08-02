@@ -20,6 +20,7 @@ export const PatientEditModal: React.FC<PatientEditModalProps> = ({
     loading,
     patient,
 }) => {
+    console.log("EM:",patient)
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {

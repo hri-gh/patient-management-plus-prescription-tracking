@@ -8,6 +8,11 @@ export async function POST(
 ) {
     await dbConnect();
 
+    const authResult = await authenticate(req)
+    if ('status' in authResult) {
+        return Response.json(authResult, { status: authResult.status })
+    }
+
     try {
         const patientId = params.patientId
         const reqBody = await req.json();

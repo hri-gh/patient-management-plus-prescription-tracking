@@ -3,7 +3,7 @@ import { create } from 'zustand'
 export interface Drug {
     _id: string;
     drugName: string;
-    quantity: number;
+    quantity: string;
     price: number;
 }
 
@@ -14,16 +14,19 @@ export interface Payment {
 }
 
 export interface Prescription {
+    prescription: { drugName: string; quantity: string; price: number; };
     _id: string;
     drugs: Drug[];
     payment: Payment;
-    owner: string;
+    ownerId: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
 interface PrescriptionStore {
     prescriptions: Prescription[];
+    selectedPrescription: Prescription | null,
+    setSelectedPrescription: (prescription: Prescription | null) => void;
     setPrescriptions: (prescriptions: Prescription[]) => void;
     addPrescription: (prescription: Prescription) => void;
     deletePrescription: (_id: string) => void;
@@ -37,6 +40,8 @@ interface PrescriptionStore {
 
 export const usePrescriptionStore = create<PrescriptionStore>((set) => ({
     prescriptions: [],
+    selectedPrescription: null,
+    setSelectedPrescription: (prescription) => set({ selectedPrescription: prescription }),
     setPrescriptions: (prescriptions) => set({ prescriptions }),
     addPrescription: (prescription) => set((state) => ({ prescriptions: [...state.prescriptions, prescription] })),
     deletePrescription: (_id) => set((state) => ({ prescriptions: state.prescriptions.filter(prescription => prescription._id !== _id) })),

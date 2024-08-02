@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
-import { Copy, Edit, MoreHorizontal, Trash, User } from "lucide-react";
+import { Copy, Edit, MoreHorizontal, Trash, User, CopyIcon } from "lucide-react";
 import { ApiResponse } from "@/types/api-response";
 
 import {
@@ -21,7 +21,8 @@ import { ifError } from "assert";
 import { usePatientStore } from "@/store/patient-store";
 
 import { PatientEditModal } from "@/components/modals/patient-edit-modal";
-import { PatientData } from "@/types/patient.interface";
+import { Patient, PatientData } from "@/types/patient.interface";
+import usePatientEditModalStore from "@/store/patient-edit-modal-store";
 
 interface CellActionProps {
     data: PatientColumn;
@@ -31,15 +32,21 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({
     data
 }) => {
-    const [openEditModal, setOpenEditModal] = useState(false);
-    const [openAlertModal, setOpenAlertModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [success, setSuccess] = useState(false);
+
+    // const { open: openEditModal, loading: editModalLoading, setLoading: setEditModalLoaing, setOpen: setEditModalOpen } = usePatientEditModalStore()
+
+    // const [openEditModal, setOpenEditModal] = useState(false);
+    // const [openAlertModal, setOpenAlertModal] = useState(false);
+    // const [alertModalLoading, setAlertModalLoading] = useState(false);
     // const [loading:eLoading, setLoading] = useState(false);
 
     const router = useRouter()
     const params = useParams()
     const { toast } = useToast()
 
-    const { deletePatient: deletePatientFromStore } = usePatientStore();
+    const { deletePatient: deletePatientFromStore, addPatient, setSelectedPatient, selectedPatient } = usePatientStore();
 
     const { deletePatient, error, loading } = useDeletePatient()
 
@@ -52,44 +59,99 @@ export const CellAction: React.FC<CellActionProps> = ({
         });
     }
 
-    const onConfirm = async () => {
-        const response = await deletePatient(data._id);
+    const handleDeletePatient = async () => {
+        if (confirm("Are you sure you want to delete this patient? This action cannot be undone.")) {
 
-        if (response?.data.deletedPatient) {
-            toast({
-                title: 'Patient Deleted',
-                description: response?.data.message,
-                variant: 'success',
-            });
-            deletePatientFromStore(response.data.deletedPatient._id);
+            const response = await deletePatient(data._id);
 
-            setOpenAlertModal(false);
-        } else {
+            if (response?.data.deletedPatient) {
+                toast({
+                    title: 'Patient Deleted',
+                    description: response?.data.message,
+                    variant: 'success',
+                });
+                deletePatientFromStore(response.data.deletedPatient._id);
+
+            } else {
+                toast({
+                    title: 'Deletion failed',
+                    description: error?.message,
+                    variant: 'destructive',
+                });
+            }
+        }
+    };
+
+    const handleClonePatient = async () => {
+        const { _id, ...rest } = data;
+        setIsSubmitting(true);
+        try {
+
+            // Add a delay of 1 second ((1000 milliseconds)) before making the API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const response = await axios.post('/api/patients', rest)
+
+            if (response?.data.patient && response.status === 201) {
+                setSuccess(true)
+
+                addPatient(response.data?.patient)
+
+                toast({
+                    title: 'Success',
+                    description: "Patient cloned successfully",
+                    variant: 'success'
+                });
+            }
+
+        } catch (error) {
+            console.error('Error during cloning patient:', error);
+
+            const axiosError = error as AxiosError<ApiResponse>;
+
+            // Default error message
+            let errorMessage = axiosError.response?.data.message;
+            ('Something went wrong. Please try again.');
+
             toast({
-                title: 'Deletion failed',
-                description: error?.message,
+                title: 'Clone Failed',
+                description: errorMessage,
                 variant: 'destructive',
             });
 
-            setOpenAlertModal(false);
+            setIsSubmitting(false);
+        } finally {
+            setIsSubmitting(false);
         }
-    };
+    }
+
+    // const handleEditModal = (patient: PatientData) => {
+    //     // console.log("CAPI_1::",patient)
+    //     setSelectedPatient(null)
+    //     setSelectedPatient(patient)
+    //     console.log("CAPI::", selectedPatient)
+    //     // setEditModalOpen(true)
+    // }
 
 
     return (
         <>
-            <PatientEditModal
-                isOpen={openEditModal}
-                loading={loading}
-                onClose={() => setOpenEditModal(false)}
-                patient={data}
-            />
-            <AlertModal
+            {/* {selectedPatient && openEditModal && (
+                <PatientEditModal
+                    isOpen={openEditModal}
+                    loading={editModalLoading}
+                    onClose={() => setEditModalOpen(false)}
+                    patient={selectedPatient}
+                />
+            )} */}
+            {/* <AlertModal
                 isOpen={openAlertModal}
-                onClose={() => setOpenAlertModal(false)}
+                onClose={() => {
+                    console.log("Closing alert modal");
+                    setOpenAlertModal(false);
+                }}
                 onConfirm={onConfirm}
-                loading={loading}
-            />
+                loading={alertModalLoading}
+            /> */}
 
 
             <DropdownMenu>
@@ -117,15 +179,23 @@ export const CellAction: React.FC<CellActionProps> = ({
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                        // onClick={() => router.push(`/patients/${data._id}/edit`)}
-                        onClick={() => setOpenEditModal(true)}
+                    onClick={() => router.push(`/patients/${data._id}/edit`)}
+                    // onClick={() => handleEditModal(data)}
                     >
                         <Edit className="mr-2 h-4 w-4" /> Update
                     </DropdownMenuItem>
+
                     <DropdownMenuItem
-                        onClick={() => setOpenAlertModal(true)}
+                        // onClick={() => handleDeletePatient(true)}
+                        onClick={handleDeletePatient}
                     >
                         <Trash className="mr-2 h-4 w-4" /> Delete
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                        onClick={handleClonePatient}
+                    >
+                        <Copy className="mr-2 h-4 w-4" /> Clone
                     </DropdownMenuItem>
                 </DropdownMenuContent>
 

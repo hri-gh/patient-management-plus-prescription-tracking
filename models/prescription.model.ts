@@ -8,7 +8,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface Drug extends Document {
     drugName: string;
-    quantity: number;
+    quantity: string;
     price: number;
 }
 
@@ -17,7 +17,7 @@ const DrugSchema: Schema<Drug> = new mongoose.Schema({
         type: String
     },
     quantity: {
-        type: Number,
+        type: String,
     },
     price:{
         type: Number,

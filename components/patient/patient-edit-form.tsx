@@ -11,7 +11,6 @@ import axios, { AxiosError } from 'axios'
 import { ApiResponse } from '@/types/api-response';
 import { CircleCheckBig } from 'lucide-react';
 
-
 // COMPONENTS IMPORT
 import {
     Form,
@@ -55,18 +54,11 @@ export const PatientEditForm: React.FC<PatientsEditFormProps> = ({ patient }) =>
 
     const { editPatient } = usePatientStore()
     const { toast } = useToast()
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof PatientRegisterSchema>>({
         resolver: zodResolver(PatientRegisterSchema),
         defaultValues: patient
-        // {
-        //     name: "",
-        //     email: "",
-        //     age: undefined,
-        //     gender: 'other',
-        //     mobile: undefined,
-        //     place: "",
-        // }
     })
 
     const onSubmit = async (data: z.infer<typeof PatientRegisterSchema>) => {
@@ -75,34 +67,24 @@ export const PatientEditForm: React.FC<PatientsEditFormProps> = ({ patient }) =>
 
             // Add a delay of 1 second ((1000 milliseconds)) before making the API call
             await new Promise(resolve => setTimeout(resolve, 1000));
-
             const response = await axios.patch(`/api/patients/${patient._id}`, data)
-            // // TODO: to check response  status is success or not
 
             // console.log("[EDIT_FORM]::", data)
+            if (response?.data.updatedPatient && response.status === 200) {
 
-            setSuccess(true)
+                setSuccess(true)
 
-            const _id = response.data?.updatedPatient._id
-            const updatedPatient = response.data?.updatedPatient
-            editPatient(_id, updatedPatient)
+                const _id = response.data?.updatedPatient._id
+                const updatedPatient = response.data?.updatedPatient
+                editPatient(_id, updatedPatient)
+                toast({
+                    title: 'Success',
+                    description: response.data.message,
+                    variant: 'success'
+                });
 
-            toast({
-                title: 'Success',
-                description: response.data.message,
-                variant: 'success'
-            });
-
-            // form.reset({
-            //     name: "",
-            //     email: "",
-            //     age: undefined,
-            //     gender: 'other',
-            //     mobile: undefined,
-            //     place: "",
-            // });
-
-
+                router.push('/patients')
+            }
 
         } catch (error) {
             console.error('Error during registering new patient:', error);
@@ -238,15 +220,16 @@ export const PatientEditForm: React.FC<PatientsEditFormProps> = ({ patient }) =>
                                     <Input
                                         {...field}
                                         placeholder="99999 99999"
-                                        type='number'
-                                    // value={Number(field.value) || 0}
-                                    // value={field.value !== undefined ? field.value : ''}
-                                    // onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
-                                    value={field.value !== undefined && field.value !== null ? field.value : ''}
-                                    onChange={(e) => {
-                                        const newValue = e.target.value === '' ? null : Number(e.target.value);
-                                        field.onChange(newValue);
-                                    }}
+                                        // type='number'
+                                        maxLength={10}
+                                        // value={Number(field.value) || 0}
+                                        // value={field.value !== undefined ? field.value : ''}
+                                        // onChange={(e) => field.onChange(Number(e.target.value) || undefined)}
+                                        value={field.value !== undefined && field.value !== null ? field.value : ''}
+                                        onChange={(e) => {
+                                            const newValue = e.target.value === '' ? null : Number(e.target.value);
+                                            field.onChange(newValue);
+                                        }}
 
                                     />
                                 </FormControl>
@@ -273,7 +256,7 @@ export const PatientEditForm: React.FC<PatientsEditFormProps> = ({ patient }) =>
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" disabled={isSubmitting} className={`w-full ${success && 'bg-green-500'}`}>
+                    <Button type="submit" disabled={isSubmitting} className={`w-full mt-2 ${success && 'bg-green-500'}`}>
                         {isSubmitting ? (
                             <>
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

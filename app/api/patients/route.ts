@@ -17,11 +17,11 @@ export async function POST(req: Request) {
         const reqBody: Patient = await req.json();
         const { name, mobile, email, age, gender, place, } = reqBody;
 
-        const existingUser = await PatientModel.findOne({ mobile });
+        // const existingUser = await PatientModel.findOne({ mobile });
 
-        if (existingUser) {
-            return Response.json({ success: false, message: 'Mobile number is already taken', }, { status: 400 })
-        }
+        // if (existingUser) {
+        //     return Response.json({ success: false, message: 'Mobile number is already taken', }, { status: 400 })
+        // }
 
         const newPatient = new PatientModel({
             name,

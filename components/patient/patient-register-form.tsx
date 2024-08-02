@@ -69,11 +69,9 @@ export const PatientRegisterForm = () => {
 
             // Add a delay of 1 second ((1000 milliseconds)) before making the API call
             await new Promise(resolve => setTimeout(resolve, 1000));
-
             const response = await axios.post('/api/patients', data)
-            // TODO: to check response  status is success or not
 
-            if (response?.data.patient) {
+            if (response?.data.patient && response.status === 201) {
                 setSuccess(true)
                 addPatient(response.data?.patient)
                 toast({
@@ -81,12 +79,6 @@ export const PatientRegisterForm = () => {
                     description: response.data.message,
                     variant: 'success'
                 });
-            } else {
-                setSuccess(false)
-                toast({
-                    title: "Error",
-                    description: "Something went wrong",
-                })
             }
             form.reset({
                 name: "",
@@ -96,9 +88,6 @@ export const PatientRegisterForm = () => {
                 mobile: undefined,
                 place: "",
             });
-
-
-
         } catch (error) {
             console.error('Error during registering new patient:', error);
 
@@ -228,7 +217,8 @@ export const PatientRegisterForm = () => {
                                     <Input
                                         {...field}
                                         placeholder="99999 99999"
-                                        type='number'
+                                        // type='number'
+                                        maxLength={10}
                                         // value={Number(field.value) || 0}
                                         value={field.value !== undefined ? field.value : ''}
                                         onChange={(e) => field.onChange(Number(e.target.value) || undefined)}

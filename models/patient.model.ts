@@ -11,7 +11,6 @@ const PatientSchema: Schema<PatientDocument> = new mongoose.Schema({
     mobile: {
         type: Number,
         required: [true, 'Mobile Number is required'],
-        unique: true,
     },
     email: {
         type: String,

@@ -10,6 +10,7 @@ import axios, { AxiosError } from "axios"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ApiResponse } from "@/types/api-response"
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import {
   Form,
   FormControl,
@@ -19,22 +20,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+
 import { toast } from "@/components/ui/use-toast"
 
 import { Combobox } from '@/components/ui/combobox'
 import React, { MouseEvent } from "react"
 import { Separator } from "../ui/separator"
 import { Input } from "../ui/input"
-import { CirclePlus, CircleCheckBig, Loader2 } from 'lucide-react';
+import { CirclePlus, CircleCheckBig, Loader2, CircleX, Trash } from 'lucide-react';
 import { useParams } from "next/navigation"
 import usePrescriptionCreateModalStore from "@/store/prescription-create-modal-store"
 import { usePrescriptionStore } from "@/store/prescription-store"
 import { ProgressBar } from "../progress-bar"
+import CustomTooltip from "../tooltip"
 
 const drugs = [
   { label: "Aspirin", value: "aspirin" },
@@ -50,18 +48,17 @@ const drugs = [
 ]
 
 const quantity = [
-  { label: "1", value: "1" },
-  { label: "2", value: "2" },
-  { label: "3", value: "3" },
-  { label: "4", value: "4" },
-  { label: "5", value: "5" },
-  { label: "6", value: "6" },
-  { label: "7", value: "7" },
-  { label: "8", value: "8" },
-  { label: "9", value: "9" },
-  { label: "10", value: "10" }
+  { label: "1 Tab", value: "1 tab" },
+  { label: "2 Tab", value: "2 tab" },
+  { label: "3 Tab", value: "3 tab" },
+  { label: "4 Tab", value: "4 tab" },
+  { label: "5 Tab", value: "5 tab" },
+  { label: "6 Tab", value: "6 tab" },
+  { label: "7 Tab", value: "7 tab" },
+  { label: "8 Tab", value: "8 tab" },
+  { label: "9 Tab", value: "9 tab" },
+  { label: "10 Tab", value: "10 tab" }
 ]
-
 
 
 const FormSchema = z.object({
@@ -77,17 +74,10 @@ const FormSchema = z.object({
     required_error: "Please select price",
   }),
 
-  // total_amount: z.number({
-  //   required_error: "Please enter total amount",
-  // }).optional(),
-
   paid: z.number({
     required_error: "Please enter paid amount",
   }).optional(),
 
-  // due: z.number({
-  //   required_error: "Please enter due amount",
-  // }).optional(),
 })
 
 export function PrescriptionForm() {
@@ -128,7 +118,7 @@ export function PrescriptionForm() {
       const response = await axios.post(`/api/patients/${params.patientId}/prescriptions`, data)
       console.log("PRESCRIPTION_FORM_RESPONSE::", response)
 
-      if (response?.data.prescription) {
+      if (response?.data.prescription && response?.status === 200) {
         setSuccess(true)
         addPrescription(response.data?.prescription)
         toast({
@@ -136,12 +126,6 @@ export function PrescriptionForm() {
           description: response.data.message,
           variant: 'success'
         });
-      } else {
-        setSuccess(false)
-        toast({
-          title: "Error",
-          description: "Something went wrong",
-        })
       }
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
@@ -174,14 +158,14 @@ export function PrescriptionForm() {
     setTotalAmount(totalAmount);
     setDueAmount(totalAmount - paidAmount); // Update due amount
     // console.log("Whole data:", data)
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // })
   }
 
   const handleDelete = (index: number) => {
@@ -198,7 +182,7 @@ export function PrescriptionForm() {
     setDueAmount(totalAmount - paid);
   };
 
-  console.log("LIST:", list)
+  // console.log("LIST:", list)
   // console.log("Amount:", totalAmount)
   // console.log("Paid_Amount:", paidAmount)
   // console.log("Due_Amount:", dueAmount)
@@ -404,38 +388,38 @@ export function PrescriptionForm() {
           </Button>
           <br />
           {success && <ProgressBar shape="line" duration={5} onComplete={() => setSuccess(false)} />}
-
-          {/* <Button onClick={(e: MouseEvent) => {
-            e.preventDefault()
-            handleSubmit()
-          }}
-            className="my-5 h-10 gap-1">
-            Submit
-          </Button> */}
         </form>
       </Form>
 
       <Separator />
-      {/* table, th td */}
-      <table className="m-2 border-4 border-black">
-        <thead className="">
-          <tr className="">
-            <th className="border-2">Drug</th>
-            <th className="border-2">Quantity</th>
-            <th className="border-2">Price</th>
-          </tr>
-        </thead>
-        <tbody >
-          {list.map((item, index) => (
-            <tr key={index}>
-              <td className="border-2"> {item.drugName}</td>
-              <td className="border-2"> {item.quantity}</td>
-              <td className="border-2"> {item.price}</td>
-              <Delete />
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div>
+        <Table>
+          <TableHeader>
+            <TableRow className="">
+              <TableHead>Drug</TableHead>
+              <TableHead>Quantity</TableHead>
+              <TableHead>Price</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {list.map((item, index) => (
+              <TableRow key={index}>
+                <TableCell>{item.drugName}</TableCell>
+                <TableCell>{item.quantity}</TableCell>
+                <TableCell>{item.price}</TableCell>
+                <TableCell className="" >
+                  <CustomTooltip content="Remove drug">
+                    <Delete
+                      onClick={() => handleDelete(index)}
+                      className="cursor-pointer text-red-400 hover:text-red-500"
+                    />
+                  </CustomTooltip>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </>
   )
 }

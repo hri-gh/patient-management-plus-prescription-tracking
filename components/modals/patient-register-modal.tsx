@@ -5,8 +5,6 @@ import React, { useEffect, useState } from 'react'
 import { Modal } from "@/components/ui/modal";
 import { PatientRegisterForm } from '../patient/patient-register-form';
 
-import { PatientData } from '@/types/patient.interface';
-
 interface PatientRegisterModalProps {
     isOpen: boolean;
     onClose: () => void;

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 
 export function ProfileDetails() {
     return (
-        <Card className="bg-gray-200 w-full max-w-xs float-start max-h-lvh mx-auto p-6 sm:p-8">
+        <Card className="bg-gray-200 w-full max-w-md float-start flex mx-auto p-6 sm:p-8">
             <CardHeader className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
                     <AvatarImage src="/placeholder-user.jpg" />
