@@ -4,7 +4,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Download, Printer, SquarePen, Trash, Trash2, IndianRupee } from "lucide-react"
+import { Download, Printer, SquarePen, Trash2, Eye, EyeOff } from "lucide-react"
 import { Prescription } from '@/store/prescription-store';
 
 
@@ -17,6 +17,12 @@ interface Props {
 
 
 const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdit, onDelete }) => {
+    const [showFullId, setShowFullId] = useState(false);
+
+    const toggleIdVisibility = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setShowFullId(!showFullId);
+    };
 
     const isoDate = prescription.createdAt
     const date = new Date(isoDate);
@@ -33,13 +39,22 @@ const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdi
 
     return (
         <>
-            <Card className="cursor-pointer w-full max-w-sm m-2 border-2  hover:shadow-indigo-500"
+            <Card className="cursor-pointer w-full max-w-xs m-2 border-2  hover:shadow-indigo-500"
                 onClick={onClick}>
                 <CardHeader className="flex items-center justify-between bg-muted/50 px-6 py-2">
                     <div className="grid gap-1">
-                        <CardTitle className="text-sm lg:text-lg font-medium ">Id: {prescription._id}</CardTitle>
+                        <CardTitle className="text-sm  font-medium ">
+                            {showFullId ? prescription._id : `${prescription._id.slice(0, 6)}...${prescription._id.slice(-4)}`}
+                        </CardTitle>
                         {/* <CardDescription className="text-sm text-muted-foreground">Filled on November 23, 2023</CardDescription> */}
                     </div>
+                    <Button
+                        onClick={toggleIdVisibility}
+                        variant="outline" size="icon" className="h-6 w-6"
+                    >
+                        {showFullId ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        <span className="sr-only">{showFullId ? 'Hide ID' : 'Show ID'}</span>
+                    </Button>
                     <div className="flex items-center gap-2">
 
                         <Button
@@ -108,15 +123,15 @@ const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdi
                         </div>
                         <div className="grid ">
                             <div className="grid gap-1">
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-center justify-between flex-wrap">
                                     <span className="text-muted-foreground">Total</span>
                                     <span>₹{prescription.payment.totalAmount}</span>
                                 </div>
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-center justify-between flex-wrap">
                                     <span className="text-muted-foreground">Paid</span>
                                     <span>₹{prescription.payment.paidAmount}</span>
                                 </div>
-                                <div className="flex items-center justify-between">
+                                <div className="flex items-center justify-between flex-wrap">
                                     <span className="text-muted-foreground">Due</span>
                                     <span>₹{prescription.payment.dueAmount}</span>
                                 </div>
@@ -137,10 +152,6 @@ const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdi
         </>
     )
 }
-
-
-
-
 
 
 export default PrescriptionPreviewCard

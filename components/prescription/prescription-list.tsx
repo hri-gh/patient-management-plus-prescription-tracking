@@ -10,6 +10,7 @@ import { useParams } from "next/navigation"
 import { AlertModal } from '../modals/alert-modal';
 import { toast } from '../ui/use-toast';
 import useDeletePrescription from '@/hooks/useDeletePrescription';
+import { ScrollArea } from '../ui/scroll-area';
 
 const PrescriptionList = () => {
     const [selectedPrescriptionId, setSelectedPrescriptionId] = useState<string | undefined>(undefined);
@@ -70,9 +71,11 @@ const PrescriptionList = () => {
 
     return (
         <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <ScrollArea className='h-[600px] '>
+            <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
                 {
                     prescriptions.map((prescription: Prescription) => (
+
                         <PrescriptionPreviewCard
                             key={prescription._id}
                             prescription={prescription}
@@ -83,6 +86,7 @@ const PrescriptionList = () => {
                     ))
                 }
             </div>
+        </ScrollArea>
             {selectedPrescription && openInfoModal && (
                 <PrescriptionInfoModal
                     isOpen={openInfoModal}

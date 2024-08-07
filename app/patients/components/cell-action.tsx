@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
-import { Copy, Edit, MoreHorizontal, Trash, User, CopyIcon } from "lucide-react";
+import { Copy, Edit, MoreHorizontal, Trash, User, CopyIcon, IndianRupee } from "lucide-react";
 import { ApiResponse } from "@/types/api-response";
 
 import {
@@ -23,6 +23,7 @@ import { usePatientStore } from "@/store/patient-store";
 import { PatientEditModal } from "@/components/modals/patient-edit-modal";
 import { Patient, PatientData } from "@/types/patient.interface";
 import usePatientEditModalStore from "@/store/patient-edit-modal-store";
+import usePaymentReminder from "@/hooks/usePaymentReminder";
 
 interface CellActionProps {
     data: PatientColumn;
@@ -47,7 +48,7 @@ export const CellAction: React.FC<CellActionProps> = ({
     const { toast } = useToast()
 
     const { deletePatient: deletePatientFromStore, addPatient, setSelectedPatient, selectedPatient } = usePatientStore();
-
+    const { paymentReminder } = usePaymentReminder()
     const { deletePatient, error, loading } = useDeletePatient()
 
     const onCopy = (id: string) => {
@@ -124,6 +125,26 @@ export const CellAction: React.FC<CellActionProps> = ({
         }
     }
 
+    const handlePaymentReminder = async (id: string) => {
+        const response = await paymentReminder(id)
+
+        if (response?.data.patient && response?.status === 200) {
+            toast({
+                title: 'Email sent successfully',
+                description: response?.data.message,
+                variant: 'success',
+            });
+
+
+        } else {
+            toast({
+                title: 'Failed to sent email',
+                description: error?.message,
+                variant: 'destructive',
+            });
+        }
+    }
+
     // const handleEditModal = (patient: PatientData) => {
     //     // console.log("CAPI_1::",patient)
     //     setSelectedPatient(null)
@@ -179,10 +200,17 @@ export const CellAction: React.FC<CellActionProps> = ({
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                    onClick={() => router.push(`/patients/${data._id}/edit`)}
+                        onClick={() => router.push(`/patients/${data._id}/edit`)}
                     // onClick={() => handleEditModal(data)}
                     >
                         <Edit className="mr-2 h-4 w-4" /> Update
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                        // onClick={() => handleDeletePatient(true)}
+                        onClick={() => handlePaymentReminder(data._id)}
+                    >
+                        <IndianRupee className="mr-2 h-4 w-4" /> Payment Reminder
                     </DropdownMenuItem>
 
                     <DropdownMenuItem

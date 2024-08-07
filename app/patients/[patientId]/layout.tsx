@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 // import Navbar from './components/navigation/navbar'
 import SideNav from './components/navigation/side-nav'
+import { Sidebar, SidebarItem } from './components/navigation/sidebar';
+
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -17,12 +20,21 @@ export default async function PatientLayout({
 
     return (
         <>
-            <div className="flex h-screen flex-col md:flex-row md:overflow-hidden">
-                <div className=" w-full flex-none md:w-64">
-                    <SideNav />
-                </div>
-                {/* md:p-12 changed to md:p-5 */}
-                <div className="flex-grow p-6 md:overflow-y-auto md:py-5 md:px-12 ">{children}</div>
+            {/* <div className="flex h-screen flex-col md:flex-row md:overflow-hidden"> */}
+            {/* <div className=" w-full flex-none md:w-64"> */}
+            {/* <SideNav /> */}
+            {/* </div> */}
+            {/* md:p-12 changed to md:p-5 */}
+            {/* <div className="flex-grow p-6 md:overflow-y-auto md:py-5 md:px-12 ">{children}</div> */}
+            {/* </div> */}
+            <div className="flex">
+                <Sidebar>
+                    <SidebarItem />
+                </Sidebar>
+                <main className="flex-grow p-6 md:overflow-y-auto md:py-5 md:px-12 ">
+                {/* <main className="flex-1"> */}
+                    {children}
+                </main>
             </div>
         </>
     );

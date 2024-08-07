@@ -20,7 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-
+import { ScrollArea } from "../ui/scroll-area"
 import { toast } from "@/components/ui/use-toast"
 import {
   Popover,
@@ -84,7 +84,7 @@ const FormSchema = z.object({
 
 })
 
-export function PrescriptionForm() {
+export function PrescriptionCreateForm() {
   const [list, setList] = useState<z.infer<typeof FormSchema>[]>([])
   const [totalAmount, setTotalAmount] = useState<number>(0)
   const [dueAmount, setDueAmount] = useState<number>(0)
@@ -122,7 +122,7 @@ export function PrescriptionForm() {
       const response = await axios.post(`/api/patients/${params.patientId}/prescriptions`, data)
       console.log("PRESCRIPTION_FORM_RESPONSE::", response)
 
-      if (response?.data.prescription && response?.status === 200) {
+      if (response?.data.prescription && response?.status === 201) {
         setSuccess(true)
         addPrescription(response.data?.prescription)
         toast({
@@ -190,6 +190,7 @@ export function PrescriptionForm() {
     <>
       <Form {...form} >
         <form onSubmit={form.handleSubmit(onSubmit)} className="">
+          <h1 className="text-2xl font-semibold text-center mb-4  text-slate-200">Create Prescriptions</h1>
           <div className=" flex gap-2 my-2">
 
             {/* TOTAL AMOUNT FIELD */}
@@ -216,7 +217,7 @@ export function PrescriptionForm() {
           </div>
 
           {/* DRUG FIELD */}
-          <div className=" flex gap-2 my-2">
+          <div className=" flex flex-wrap gap-2 my-2">
             <FormField
               control={form.control}
               name="drugName"
@@ -275,33 +276,16 @@ export function PrescriptionForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="my-5 h-10 gap-1">
+          </div>
+          <div className="flex flex-wrap mb-4">
+            <Button type="submit" className=" gap-1 ">
               <CirclePlus className="w-4" />Add
             </Button>
           </div>
-          <Button
-            disabled={isSubmitting}
-            onClick={(e: React.MouseEvent) => {
-              e.preventDefault()
-              handleSubmit()
-            }}
-            className={`my-5 h-10 gap-1 ${success && 'bg-green-500'}`}>
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Please wait
-              </>
-            ) : (
-              success ? <><CircleCheckBig className='mr-1' /><p>Added</p> </> : 'Submit'
-            )}
-            {/* {success && <ProgressBar shape="fill-circular" duration={20} onComplete={() => setSuccess(false)} />} */}
-          </Button>
-          <br />
-          {success && <ProgressBar shape="line" duration={5} onComplete={() => setSuccess(false)} />}
         </form>
       </Form>
+      <Separator className="flex"/>
 
-      <Separator />
       <div>
         <Table>
           <TableHeader>
@@ -314,6 +298,7 @@ export function PrescriptionForm() {
           <TableBody>
             {list.map((item, index) => (
               <TableRow key={index}>
+
                 <TableCell>{item.drugName}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>{item.price}</TableCell>
@@ -326,10 +311,31 @@ export function PrescriptionForm() {
                   </CustomTooltip>
                 </TableCell>
               </TableRow>
+
             ))}
           </TableBody>
         </Table>
       </div>
+
+      <Button
+        disabled={isSubmitting}
+        onClick={(e: React.MouseEvent) => {
+          e.preventDefault()
+          handleSubmit()
+        }}
+        className={`my-5 h-10 gap-1 ${success && 'bg-green-500'}`}>
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Please wait
+          </>
+        ) : (
+          success ? <><CircleCheckBig className='mr-1' /><p>Added</p> </> : 'Submit'
+        )}
+        {/* {success && <ProgressBar shape="fill-circular" duration={20} onComplete={() => setSuccess(false)} />} */}
+      </Button>
+      <br />
+      {success && <ProgressBar shape="line" duration={5} onComplete={() => setSuccess(false)} />}
     </>
   )
 }
