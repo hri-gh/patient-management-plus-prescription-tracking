@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 // UI COMPONENTS
 
 import { Modal } from "@/components/ui/modal";
-import { PrescriptionForm } from '../prescription/prescription-create-form';
 
 
 interface PrescriptionModalProps {
@@ -40,7 +39,7 @@ export const PrescriptionCreateModal: React.FC<PrescriptionModalProps> = ({
             {loading && (
                 <h1 className=''>Loading...</h1>
             )}
-            <PrescriptionForm />
+            {/* <PrescriptionForm /> */}
         </Modal>
     )
 }
