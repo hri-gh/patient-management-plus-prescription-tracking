@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 // import {PatientRegisterForm} from '@/components/patient/patient-register-form'
-import { PrescriptionForm } from '@/components/prescription/prescription-create-form'
 import { TestModal } from '@/components/modals/test-modal'
 import { Button } from '@/components/ui/button'
 import { TestForm } from '@/components/prescription/test-form'
