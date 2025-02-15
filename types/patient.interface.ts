@@ -26,5 +26,6 @@ export interface PatientData extends Patient {
     _id: string;
     createdAt: Date;
     updatedAt: Date;
+    prescriptionCount: number;
     // __v: number;
 }

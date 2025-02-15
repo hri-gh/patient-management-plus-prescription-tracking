@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
-import { Copy, Edit, MoreHorizontal, Trash, User, CopyIcon, IndianRupee } from "lucide-react";
+import { Copy, Edit, MoreHorizontal, Trash, User, CopyIcon, IndianRupee, Plus } from "lucide-react";
 import { ApiResponse } from "@/types/api-response";
 
 import {
@@ -24,6 +24,9 @@ import { PatientEditModal } from "@/components/modals/patient-edit-modal";
 import { Patient, PatientData } from "@/types/patient.interface";
 import usePatientEditModalStore from "@/store/patient-edit-modal-store";
 import usePaymentReminder from "@/hooks/usePaymentReminder";
+import usePrescriptionCreateModalStore from '@/store/prescription-create-modal-store';
+import { PrescriptionCreateModal } from '@/components/modals/prescription-create-modal';
+
 
 interface CellActionProps {
     data: PatientColumn;
@@ -50,6 +53,7 @@ export const CellAction: React.FC<CellActionProps> = ({
     const { deletePatient: deletePatientFromStore, addPatient, setSelectedPatient, selectedPatient } = usePatientStore();
     const { paymentReminder } = usePaymentReminder()
     const { deletePatient, error, loading } = useDeletePatient()
+    const { open, loading: modalLoading, setOpen, setLoading } = usePrescriptionCreateModalStore()
 
     const onCopy = (id: string) => {
         navigator.clipboard.writeText(id);
@@ -153,9 +157,20 @@ export const CellAction: React.FC<CellActionProps> = ({
     //     // setEditModalOpen(true)
     // }
 
+    const handlePrescriptionCreateModal = () => {
+        setLoading(true);
+        setOpen(true)
+        setLoading(false)
+    }
+
 
     return (
         <>
+            <PrescriptionCreateModal
+                isOpen={open}
+                loading={modalLoading}
+                onClose={() => setOpen(false)}
+            />
             {/* {selectedPatient && openEditModal && (
                 <PatientEditModal
                     isOpen={openEditModal}
@@ -187,6 +202,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                 {/* DropdownMenuContent */}
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+
                     <DropdownMenuItem
                         onClick={() => router.push(`/patients/${data._id}`)}
                     >

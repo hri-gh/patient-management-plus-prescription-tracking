@@ -1,22 +1,14 @@
-"use client"
+// "use client"
 
 import Link from 'next/link';
 import Image from 'next/image';
 
-// Fonts Import
-// import { lusitana } from '@/components/fonts/fonts';
-
-
 import { Badge } from '@/components/ui/badge';
 
-// import { ContactModal } from '@/components/modals/contact-modal'
-import { useState } from 'react';
-
-// import { MovingBorderButton } from '@/components/custom-ui/moving-border';
 import { PatientData } from '@/types/patient.interface';
 import { Separator } from '@/components/ui/separator';
 
-export default function ProfileCard({ patient }: { patient: PatientData }) {
+export default function ProfileCard() {
 
     return (
         <div
@@ -36,19 +28,23 @@ export default function ProfileCard({ patient }: { patient: PatientData }) {
             /> */}
 
             <div className='text-center'>
-                <p className="text-center text-2xl font-bold">{patient.name}</p>
+                <p className="text-center text-2xl font-bold">
+                    John
+                    {/* {patient.name} */}
+                </p>
                 {/* <Separator /> */}
                 <p className="text-sm">
                     <strong>Age: </strong>
-                    {patient.age}
+                    25
+                    {/* {patient.age} */}
                 </p>
 
-                <p className="text-sm m-0">
+                {/* <p className="text-sm m-0">
                     <strong>Mobile: </strong>
                     {patient.mobile}
-                </p>
+                </p> */}
 
-                <p className="text-sm m-0">
+                {/* <p className="text-sm m-0">
                     <strong>Email: </strong>
                     {patient.email ? patient.email : "No email"}
                 </p>
@@ -66,7 +62,7 @@ export default function ProfileCard({ patient }: { patient: PatientData }) {
                 <p className="text-sm m-0">
                     <strong>CreatedAt: </strong>
                     {"15 Jul, 2023"}
-                </p>
+                </p> */}
             </div>
 
         </div>

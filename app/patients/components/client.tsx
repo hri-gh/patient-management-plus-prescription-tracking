@@ -7,6 +7,12 @@ import { useState, useEffect } from 'react';
 import { DataTable } from '@/components/ui/data-table';
 import { PatientRegisterModal } from '@/components/modals/patient-register-modal';
 
+// HOOKS
+import { useFetchPatients } from '@/hooks/useFetchPatients'
+
+// STORE
+import { usePatientStore } from '@/store/patient-store'
+
 
 // ICONS IMPORT
 
@@ -18,6 +24,15 @@ interface PatientClientProps {
 
 
 export const PatientClient = ({ data }: PatientClientProps) => {
+
+    const { setPatients, patients } = usePatientStore()
+
+    useEffect(() => {
+        if (data) {
+            setPatients(data);
+        }
+    }, [data]);
+
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -36,15 +51,15 @@ export const PatientClient = ({ data }: PatientClientProps) => {
             />
             {/* <div className="flex flex-col min-h-screen"> */}
 
-                <main className="flex-1 p-4 md:p-6">
-                    <div className='mb-6'>
-                        <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
-                        <p className="text-muted-foreground">
-                            Here&apos;s a list of your patients!
-                        </p>
-                    </div>
-                    <DataTable data={data} columns={columns} searchKey={'name'} />
-                </main>
+            <main className="flex-1 p-4 md:p-6">
+                <div className='mb-6'>
+                    <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
+                    <p className="text-muted-foreground">
+                        Here&apos;s a list of your patients!
+                    </p>
+                </div>
+                <DataTable data={patients} columns={columns} searchKey={'name'} />
+            </main>
             {/* </div> */}
         </>
     )

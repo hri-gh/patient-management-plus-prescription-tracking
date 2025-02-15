@@ -22,11 +22,6 @@ import {
 } from "@/components/ui/form"
 import { ScrollArea } from "../ui/scroll-area"
 import { toast } from "@/components/ui/use-toast"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import { Combobox } from '@/components/ui/combobox'
 import React, { MouseEvent } from "react"
 import { Separator } from "../ui/separator"
@@ -37,6 +32,7 @@ import usePrescriptionCreateModalStore from "@/store/prescription-create-modal-s
 import { usePrescriptionStore } from "@/store/prescription-store"
 import { ProgressBar } from "../progress-bar"
 import CustomTooltip from "../tooltip"
+import { usePatientStore } from "@/store/patient-store"
 
 const drugs = [
   { label: "Aspirin", value: "aspirin" },
@@ -84,7 +80,7 @@ const FormSchema = z.object({
 
 })
 
-export function PrescriptionCreateForm() {
+export function PrescriptionCreateForm({ patientId }: { patientId?: string }) {
   const [list, setList] = useState<z.infer<typeof FormSchema>[]>([])
   const [totalAmount, setTotalAmount] = useState<number>(0)
   const [dueAmount, setDueAmount] = useState<number>(0)
@@ -96,7 +92,11 @@ export function PrescriptionCreateForm() {
 
   const params = useParams()
   const { addPrescription } = usePrescriptionStore()
+  const { updatePrescriptionCountAfterAdd } = usePatientStore()
   const { setOpen } = usePrescriptionCreateModalStore()
+
+  const patientIdToUse = patientId ?? params.patientId;
+
 
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -119,11 +119,12 @@ export function PrescriptionCreateForm() {
     try {
       // Add a delay of 1 second ((1000 milliseconds)) before making the API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const response = await axios.post(`/api/patients/${params.patientId}/prescriptions`, data)
+      const response = await axios.post(`/api/patients/${patientIdToUse}/prescriptions`, data)
       console.log("PRESCRIPTION_FORM_RESPONSE::", response)
 
       if (response?.data.prescription && response?.status === 201) {
         setSuccess(true)
+        updatePrescriptionCountAfterAdd(patientIdToUse as string)
         addPrescription(response.data?.prescription)
         toast({
           title: 'Success',
@@ -216,8 +217,10 @@ export function PrescriptionCreateForm() {
 
           </div>
 
-          {/* DRUG FIELD */}
+
           <div className=" flex flex-wrap gap-2 my-2">
+
+            {/* DRUG FIELD */}
             <FormField
               control={form.control}
               name="drugName"
@@ -262,7 +265,7 @@ export function PrescriptionCreateForm() {
               control={form.control}
               name="price"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem className="w-20 flex flex-col">
                   <FormLabel>Price</FormLabel>
                   <Input placeholder="Price" type="number" {...field}
                     // value={Number(field.value) || 0}
@@ -276,6 +279,7 @@ export function PrescriptionCreateForm() {
                 </FormItem>
               )}
             />
+
           </div>
           <div className="flex flex-wrap mb-4">
             <Button type="submit" className=" gap-1 ">
@@ -284,36 +288,40 @@ export function PrescriptionCreateForm() {
           </div>
         </form>
       </Form>
-      <Separator className="flex"/>
+      <Separator className="flex" />
 
       <div>
-        <Table>
-          <TableHeader>
-            <TableRow className="">
-              <TableHead>Drug</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Price</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {list.map((item, index) => (
-              <TableRow key={index}>
-
-                <TableCell>{item.drugName}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
-                <TableCell>{item.price}</TableCell>
-                <TableCell className="" >
-                  <CustomTooltip content="Remove drug">
-                    <Delete
-                      onClick={() => handleDelete(index)}
-                      className="cursor-pointer text-red-400 hover:text-red-500"
-                    />
-                  </CustomTooltip>
-                </TableCell>
+        <Table className="">
+          <ScrollArea className="h-60">
+            <TableHeader className="sticky">
+              <TableRow className="">
+                <TableHead>Drug</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Price</TableHead>
               </TableRow>
+            </TableHeader>
+            <TableBody className="">
+              {/* <ScrollArea className="h-60"> */}
+              {list.map((item, index) => (
+                <TableRow key={index}>
 
-            ))}
-          </TableBody>
+                  <TableCell>{item.drugName}</TableCell>
+                  <TableCell>{item.quantity}</TableCell>
+                  <TableCell>{item.price}</TableCell>
+                  <TableCell className="" >
+                    <CustomTooltip content="Remove drug">
+                      <Delete
+                        onClick={() => handleDelete(index)}
+                        className="cursor-pointer text-red-400 hover:text-red-500"
+                      />
+                    </CustomTooltip>
+                  </TableCell>
+                </TableRow>
+
+              ))}
+              {/* </ScrollArea> */}
+            </TableBody>
+          </ScrollArea>
         </Table>
       </div>
 
@@ -323,7 +331,7 @@ export function PrescriptionCreateForm() {
           e.preventDefault()
           handleSubmit()
         }}
-        className={`my-5 h-10 gap-1 ${success && 'bg-green-500'}`}>
+        className={`my-5 float-end h-10 gap-1 ${success && 'bg-green-500'}`}>
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -336,6 +344,7 @@ export function PrescriptionCreateForm() {
       </Button>
       <br />
       {success && <ProgressBar shape="line" duration={5} onComplete={() => setSuccess(false)} />}
+
     </>
   )
 }

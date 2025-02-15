@@ -19,6 +19,9 @@ interface PatientStore {
     addPatient: (user: Patient) => void;
     deletePatient: (id: string) => void;
     editPatient: (id: string, updatedPatient: Partial<Patient>) => void;
+
+    updatePrescriptionCountAfterAdd: (patientId: string) => void;
+    updatePrescriptionCountAfterDelete: (patientId: string) => void;
 }
 
 export const usePatientStore = create<PatientStore>((set) => ({
@@ -31,6 +34,22 @@ export const usePatientStore = create<PatientStore>((set) => ({
     editPatient: (id, updatedPatient) => set((state) => ({
         patients: state.patients.map(patient =>
             patient._id === id ? { ...patient, ...updatedPatient } : patient
+        ),
+    })),
+
+    updatePrescriptionCountAfterAdd: (patientId: string) => set((state) => ({
+        patients: state.patients.map((patient) =>
+            patient._id === patientId
+                ? { ...patient, prescriptionCount: patient.prescriptionCount + 1 }
+                : patient
+        ),
+    })),
+
+    updatePrescriptionCountAfterDelete: (patientId: string) => set((state) => ({
+        patients: state.patients.map((patient) =>
+            patient._id === patientId
+                ? { ...patient, prescriptionCount: patient.prescriptionCount - 1 }
+                : patient
         ),
     })),
 }));

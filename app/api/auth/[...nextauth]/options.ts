@@ -20,7 +20,6 @@ export const authOptions: NextAuthOptions = {
                 },
             },
             authorize: async (credentials: any): Promise<any> => {
-                console.log(credentials)
                 await dbConnect()
                 try {
                     let user = await AdminModel.findOne({
@@ -37,7 +36,6 @@ export const authOptions: NextAuthOptions = {
                     const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password);
 
                     if (isPasswordCorrect) {
-                        console.log("[AUTH.TS_USER::]", user)
                         return user;
                     }
                     else {

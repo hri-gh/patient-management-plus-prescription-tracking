@@ -14,6 +14,7 @@ import { ScrollArea } from '../ui/scroll-area';
 import { Button } from '../ui/button';
 import PrescriptionListView from './prescription-list-view';
 import { ListIcon, GridIcon, LayoutGridIcon } from 'lucide-react';
+import html2pdf from 'html2pdf.js';
 
 const PrescriptionContainer = () => {
     const [viewMode, setViewMode] = useState<'card' | 'list'>('card');
@@ -82,17 +83,29 @@ const PrescriptionContainer = () => {
         setViewMode(viewMode === 'card' ? 'list' : 'card');
     };
 
+    // const handlePrintPrescription = (prescription: Prescription) => {
+    //     const pdfContent = document.getElementById('pdf-content');
+    //     if (pdfContent) {
+    //         window.print();
+    //     }
+    // };
+
+    // const handleDownloadPrescription = () => {
+    //     downloadPrescription()
+    // };
+
     return (
         <>
             <div className="">
                 {/* <Button onClick={toggleView} variant="outline" className='w-10'>
                     Toggle to {viewMode === 'card' ? 'List' : 'Card'} View
                 </Button> */}
-                <div className='flex justify-between'>
+                <div className='flex flex-wrap justify-between'>
                     <div className='flex gap-3'>
-                    <p className="m-0 font-bold">Total Prescriptions: <span className="text-blue-500">{prescriptionCount()}</span></p>
-                    <p className="m-0 font-bold">Filtered Prescriptions: <span className="text-blue-500">{filteredPrescriptionCount()}</span></p>
+                        <p className="m-0 font-bold">Total Prescriptions: <span className="text-blue-500">{prescriptionCount()}</span></p>
+                        <p className="m-0 font-bold">Filtered Prescriptions: <span className="text-blue-500">{filteredPrescriptionCount()}</span></p>
                     </div>
+
                     <div className='flex justify-end'>
 
                         <Button
@@ -118,7 +131,7 @@ const PrescriptionContainer = () => {
 
                 <ScrollArea className='h-[600px] '>
                     {viewMode === 'card' ?
-                        <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                        <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {
                                 filteredPrescriptions.map((prescription: Prescription) => (
 

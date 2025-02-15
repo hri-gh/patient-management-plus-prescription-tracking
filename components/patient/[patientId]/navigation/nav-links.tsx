@@ -5,7 +5,7 @@ import clsx from 'clsx';
 
 import { Home, Hospital, User, ClipboardPlus } from "lucide-react";
 import { Button } from '@/components/ui/button';
-import AllPatientsList from '../all-patients-side-nav/all-patients-list';
+import AllPatientsList from '../../../../app/patients/[patientId]/components/patients-sidebar';
 import { useParams } from 'next/navigation';
 
 
@@ -19,6 +19,7 @@ export default function NavLinks() {
         { id: 0, name: 'Profile', href: `/patients/${params.patientId}`, icon: User, },
     ];
     return (
+
         <>
             {links.map((link) => {
                 const LinkIcon = link.icon;
@@ -42,14 +43,7 @@ export default function NavLinks() {
                     </>
                 );
             })}
-            {/* <div
-                className={clsx(
-                    // For hidden in mobile device :: hidden md:flex
-                    "flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-500 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3",
-                )}>
-                <p>All Patients</p>
-            </div> */}
-            {/* <AllPatientsList /> */}
+
 
 
         </>

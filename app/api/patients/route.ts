@@ -2,12 +2,15 @@ import dbConnect from "@/lib/db-connect";
 import PatientModel from "@/models/patient.model";
 import { Patient } from "@/types/patient.interface";
 import { authenticate } from "@/helpers/auth";
+import { NextRequest, NextResponse } from "next/server"
+import { getToken } from "next-auth/jwt";
+import { getDataFromToken } from "@/helpers/get-data-from-token";
 
-
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
     await dbConnect();
 
     const authResult = await authenticate(req)
+
     if ('status' in authResult) {
         return Response.json(authResult, { status: authResult.status })
 
@@ -42,17 +45,51 @@ export async function POST(req: Request) {
 }
 
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
     await dbConnect();
 
-    const authResult = await authenticate(req)
-    if ('status' in authResult) {
-        return Response.json(authResult, { status: authResult.status })
+    const token = req.headers.get('Authorization')?.split(' ')[1] || "";
 
-    }
+
+    // console.log("TOKEN::", token)
+
+    // const userId = getDataFromToken(token)
+    // console.log("USER::",userId)
+
+
+    // const authResult = await authenticate(req)
+
+    // const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET);
+    // const { payload } = await jwtVerify(token, secret);
+
+    // console.log("REQ::",req)
+
+    // if ('status' in authResult) {
+    //     return Response.json(authResult, { status: authResult.status })
+
+    // }
 
     try {
-        const patients = await PatientModel.find()
+        const patients = await PatientModel.aggregate([
+            {
+                $lookup: {
+                    from: 'prescriptions', // Collection name for prescriptions
+                    localField: '_id',
+                    foreignField: 'ownerId',
+                    as: 'prescriptions'
+                }
+            },
+            {
+                $addFields: {
+                    prescriptionCount: { $size: '$prescriptions' }
+                }
+            },
+            {
+                $project: {
+                    prescriptions: 0 // Optionally exclude the prescriptions array
+                }
+            },
+        ])
         return Response.json(patients);
     } catch (error) {
         console.log('[PATIENTS_GET]', error);

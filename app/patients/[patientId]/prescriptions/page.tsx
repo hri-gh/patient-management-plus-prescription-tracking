@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { useState, useEffect } from 'react';
-import { Combobox } from '@/components/ui/combobox'
 
 import { PrescriptionCreateModal } from '@/components/modals/prescription-create-modal';
 import { Button } from '@/components/ui/button';
@@ -11,14 +10,9 @@ import { Separator } from '@/components/ui/separator';
 import usePrescriptionCreateModalStore from '@/store/prescription-create-modal-store';
 import { usePrescriptionStore } from '@/store/prescription-store';
 import { useFetchPrescriptions } from '@/hooks/useFetchPrescriptions';
-import PrescriptionList from '@/components/prescription/prescription-list';
-import {
-    ResizableHandle,
-    ResizablePanel,
-    ResizablePanelGroup,
-} from "@/components/ui/resizable"
-import { PrescriptionCreateForm } from '@/components/prescription/prescription-create-form';
 import FilterPrescriptionsByYear from '@/components/prescription/sorting-filtering/filter-prescriptions-by-year';
+
+
 const years = [
     { label: '2023', value: '2023' },
     { label: '2022', value: '2022' },
@@ -54,57 +48,30 @@ const Patient = ({ params }: { params: { patientId: string } }) => {
         setLoading(false)
     }
 
+    if (loading) return <p>Loading...</p>;
+    if (error) return <p>Error: {error.message}</p>;
+
     return (
         <div>
             {/* <ProfileDetails /> */}
             {/* <h1>Patient Id: {params.patientId}</h1> */}
-            {/* <PrescriptionCreateModal
+            <PrescriptionCreateModal
                 isOpen={open}
                 loading={modalLoading}
                 onClose={() => setOpen(false)}
-            /> */}
-            <ResizablePanelGroup
-                direction="horizontal"
+            />
+            <div className='flex flex-wrap md:justify-between justify-center gap-2'>
+                <Button onClick={handlePrescriptionCreateModal}><Plus />Create New Prescription</Button>
+                <div className='flex flex-wrap gap-2'>
+                    <FilterPrescriptionsByYear />
+                    <SortPrescriptionsByNewOld />
+                    <FilterPrescriptionsByPaymentStatus />
+                    <ResetPrescriptions />
+                </div>
 
-            >
-                <ResizablePanel >
-                    <div className='flex my-2 gap-2'>
-                        <FilterPrescriptionsByYear />
-                        <SortPrescriptionsByNewOld/>
-                        <FilterPrescriptionsByPaymentStatus/>
-                        <ResetPrescriptions/>
-                        {/* <Combobox
-                        options={payment}
-                        placeholder='Select status'
-                        onChange={(value) => setPaymentStatus(value)}
-                        value={paymentStatus}
-                    />
-                    <Combobox
-                        options={years}
-                        placeholder='Select year'
-                        onChange={(value) => setYear(value)}
-                        value={year}
-                    /> */}
-                    </div>
-                    <Separator className='mt-2' />
-                    <PrescriptionContainer />
-                </ResizablePanel>
-
-                <ResizableHandle withHandle className='ml-2' />
-
-                <ResizablePanel defaultSize={40}>
-                    <div className="ml-3">
-                        <PrescriptionCreateForm />
-                    </div>
-                </ResizablePanel>
-            </ResizablePanelGroup>
-
-            {/* <div className='flex flex-wrap md:justify-between justify-center gap-2'> */}
-            {/* <Button onClick={handlePrescriptionCreateModal}><Plus />Create New Prescription</Button> */}
-
-            {/* </div> */}
-            {/* <Separator className='my-4' /> */}
-
+            </div>
+            <Separator className='my-4' />
+            <PrescriptionContainer />
         </div>
     )
 }

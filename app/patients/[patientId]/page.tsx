@@ -1,14 +1,15 @@
 
-// import { ProfileDetails } from '@/components/patient/profile-details'
+import PatientDetails from '@/components/patient/patient-details'
 import React from 'react'
 
 
-const Patient = async ({ params }: { params: { patientId: string } }) => {
+const Patient = ({ params }: { params: { patientId: string } }) => {
     try {
         return (
             <div className=''>
-                <h1>Patient Id: {params.patientId}</h1>
+                {/* <h1>Patient Id: {params.patientId}</h1> */}
                 {/* Render patient details here */}
+                <PatientDetails />
             </div>
         )
     } catch (error) {

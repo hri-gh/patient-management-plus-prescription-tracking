@@ -10,7 +10,11 @@ import {
   LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
-import AllPatientsList from "../all-patients-side-nav/all-patients-list";
+import { useParams, usePathname } from 'next/navigation';
+import AllPatientsList from "../../../../app/patients/[patientId]/components/patients-sidebar";
+import Link from "next/link";
+import clsx from 'clsx';
+import { Separator } from "@/components/ui/separator";
 interface SidebarContextProps {
   expanded: boolean;
 }
@@ -24,6 +28,7 @@ interface SidebarProps {
 }
 
 const Sidebar: FC<SidebarProps> = ({ children }) => {
+
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -47,8 +52,9 @@ const Sidebar: FC<SidebarProps> = ({ children }) => {
           </button>
         </div>
 
-        {/* <AllPatientsList/> */}
 
+        {/* <AllPatientsList expanded={expanded} /> */}
+        {/* <Separator className="border-2 rounded-full shadow border-white"/> */}
         <SidebarContext.Provider value={{ expanded }}>
           <ul className="flex-1 px-3">{children}</ul>
         </SidebarContext.Provider>
@@ -89,6 +95,8 @@ interface SidebarItemProps {
 
 const SidebarItem: FC = () => {
   const context = useContext(SidebarContext);
+  const params = useParams()
+  const pathname = usePathname();
 
   if (!context) {
     throw new Error("SidebarItem must be used within a SidebarProvider");
@@ -97,8 +105,8 @@ const SidebarItem: FC = () => {
   const { expanded } = context;
 
   const links: SidebarItemProps[] = [
-    { id: 1, text: "Prescriptions", href: "#", icon: ClipboardPlus, active: true },
-    { id: 0, text: "Profile", href: "#", icon: User },
+    { id: 1, text: "Prescriptions", href: `/patients/${params.patientId}/prescriptions`, icon: ClipboardPlus },
+    { id: 0, text: "Profile", href: `/patients/${params.patientId}`, icon: User },
   ];
 
   return (
@@ -106,19 +114,21 @@ const SidebarItem: FC = () => {
       {links.map((link) => {
         const LinkIcon = link.icon;
         return (
-          <li
+          <Link
             key={link.id}
-            className={`relative z-50 flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group ${
-              link.active
-                ? "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800"
-                : "hover:bg-indigo-50 text-gray-600"
-            }`}
+            href={link.href}
+            className={clsx
+              ("relative z-50 flex items-center py-2 px-3 my-1 font-medium rounded-md cursor-pointer transition-colors group",
+                {
+                  "bg-gradient-to-tr from-indigo-200 to-indigo-100 text-indigo-800": pathname === link.href,
+                  "hover:bg-indigo-50 text-gray-600": pathname !== link.href,
+                },
+              )}
           >
             <LinkIcon />
             <span
-              className={`overflow-hidden transition-all ${
-                expanded ? "w-52 ml-3" : "w-0"
-              }`}
+              className={`overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"
+                }`}
             >
               {link.text}
             </span>
@@ -130,7 +140,7 @@ const SidebarItem: FC = () => {
                 {link.text}
               </div>
             )}
-          </li>
+          </Link>
         );
       })}
     </>

@@ -7,7 +7,6 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Download, Printer, SquarePen, Trash2, Eye, EyeOff } from "lucide-react"
 import { Prescription } from '@/store/prescription-store';
 
-
 interface Props {
     prescription: Prescription;
     onClick: () => void;
@@ -56,24 +55,27 @@ const PrescriptionPreviewCard: React.FC<Props> = ({ prescription, onClick, onEdi
                         <span className="sr-only">{showFullId ? 'Hide ID' : 'Show ID'}</span>
                     </Button>
                     <div className="flex items-center gap-2">
-
+                        {/*
                         <Button
                             onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation()
+                                onPrint()
                             }}
                             variant="outline" size="icon" className="h-8 w-8">
                             <Printer className="h-4 w-4" />
                             <span className="sr-only">Print</span>
-                        </Button>
+                        </Button> */}
 
-                        <Button
+                        {/* <Button
                             onClick={(e: React.MouseEvent) => {
                                 e.stopPropagation()
+                                onDownload()
+
                             }}
                             variant="outline" size="icon" className="h-8 w-8">
                             <Download className="h-4 w-4" />
                             <span className="sr-only">Download</span>
-                        </Button>
+                        </Button> */}
 
                         <Button
                             onClick={(e: React.MouseEvent) => {

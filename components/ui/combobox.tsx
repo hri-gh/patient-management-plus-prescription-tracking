@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
+
 interface ComboboxOption {
   value: string;
   label: string;
@@ -44,7 +45,7 @@ export const Combobox: React.FC<ComboboxProps> = ({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 ">
+      <PopoverContent className="w-[200px] p-0 pointer-events-auto">
         <Command>
           <CommandInput placeholder={placeholder} />
           <CommandEmpty>No option found.</CommandEmpty>
